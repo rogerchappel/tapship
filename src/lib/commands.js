@@ -5,7 +5,7 @@ import { normalizeRelease } from './release.js';
 import { validateRelease } from './validate.js';
 
 export async function runPlanCommand(parsed, runtime) {
-  const { payload } = await readReleaseInput(parsed.input, runtime.cwd);
+  const { payload, resolvedPath } = await readReleaseInput(parsed.input, runtime.cwd);
   const release = normalizeRelease(payload);
   const effectiveType = resolveType(parsed.type, release);
 
@@ -28,6 +28,7 @@ export async function runPlanCommand(parsed, runtime) {
     cwd: runtime.cwd,
   });
 
+  plan.summary.input = resolvedPath;
   return {
     exitCode: plan.ok ? 0 : 1,
     stdout: parsed.json ? JSON.stringify(plan, null, 2) : renderPlanText(plan),
@@ -54,6 +55,7 @@ function renderPlanText(plan) {
   const lines = [
     `Plan: ${plan.ok ? 'ready' : 'blocked'}`,
     `Repo: ${plan.summary.repo}@${plan.summary.version}`,
+    `Input: ${plan.summary.input}`,
     `Target: ${plan.summary.target}`,
     `Mode: ${plan.writeMode ? 'write' : 'dry-run'}`
   ];
