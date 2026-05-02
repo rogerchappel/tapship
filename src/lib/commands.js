@@ -1,4 +1,5 @@
 import { buildPlan } from './plan.js';
+import { classifyAssets } from './classify.js';
 import { readReleaseInput } from './read-input.js';
 import { normalizeRelease } from './release.js';
 import { validateRelease } from './validate.js';
@@ -6,9 +7,10 @@ import { validateRelease } from './validate.js';
 export async function runPlanCommand(parsed, runtime) {
   const { payload } = await readReleaseInput(parsed.input, runtime.cwd);
   const release = normalizeRelease(payload);
+  const effectiveType = resolveType(parsed.type, release);
 
   if (parsed.command === 'validate') {
-    const validation = validateRelease(release, parsed.type);
+    const validation = validateRelease(release, effectiveType);
     return {
       exitCode: validation.ok ? 0 : 1,
       stdout: parsed.json ? JSON.stringify(validation, null, 2) : renderValidationText(validation),
@@ -20,7 +22,7 @@ export async function runPlanCommand(parsed, runtime) {
   }
 
   const plan = await buildPlan(release, {
-    type: parsed.type,
+    type: effectiveType,
     write: parsed.write,
     outputDir: parsed.outputDir,
     cwd: runtime.cwd,
@@ -30,6 +32,15 @@ export async function runPlanCommand(parsed, runtime) {
     exitCode: plan.ok ? 0 : 1,
     stdout: parsed.json ? JSON.stringify(plan, null, 2) : renderPlanText(plan),
   };
+}
+
+function resolveType(type, release) {
+  if (type !== 'auto') return type;
+  const { formulaAssets, caskAssets } = classifyAssets(release);
+  if (formulaAssets.length && caskAssets.length) return 'all';
+  if (formulaAssets.length) return 'formula';
+  if (caskAssets.length) return 'cask';
+  return 'all';
 }
 
 function renderValidationText(validation) {

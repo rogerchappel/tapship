@@ -1,7 +1,7 @@
 const HELP_TEXT = `tapship
 
 Usage:
-  tapship plan --input <release.json> [--type formula|cask|all] [--json] [--write]
+  tapship plan --input <release.json> [--type auto|formula|cask|all] [--json] [--write]
   tapship validate --input <release.json> [--json]
   tapship --help
   tapship --version
