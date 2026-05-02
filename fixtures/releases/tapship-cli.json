@@ -1,0 +1,45 @@
+{
+  "repo": {
+    "owner": "rogerchappel",
+    "name": "tapship",
+    "description": "Local-first release helper for Homebrew tap drafts.",
+    "homepage": "https://github.com/rogerchappel/tapship",
+    "license": "MIT",
+    "tap": {
+      "owner": "rogerchappel",
+      "name": "homebrew-tap"
+    }
+  },
+  "tagName": "v1.2.3",
+  "releaseName": "tapship v1.2.3",
+  "publishedAt": "2026-05-02T12:00:00Z",
+  "brew": {
+    "formulaClass": "Tapship",
+    "formulaBinary": "tapship",
+    "caskToken": "tapship",
+    "caskApp": "Tapship.app",
+    "testCommand": "tapship --version",
+    "dependencies": ["gtar"],
+    "caveats": "Dry-run by default. Review generated formulae before publishing."
+  },
+  "assets": [
+    {
+      "name": "tapship-v1.2.3-darwin-arm64.tar.gz",
+      "url": "https://example.com/tapship-v1.2.3-darwin-arm64.tar.gz",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "binary": "tapship",
+      "kind": "formula",
+      "platform": "darwin",
+      "arch": "arm64"
+    },
+    {
+      "name": "tapship-v1.2.3-macos-universal.dmg",
+      "url": "https://example.com/tapship-v1.2.3-macos-universal.dmg",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "app": "Tapship.app",
+      "kind": "cask",
+      "platform": "macos",
+      "arch": "universal"
+    }
+  ]
+}
