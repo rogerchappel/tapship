@@ -1,5 +1,6 @@
 import { parseArgs } from './lib/args.js';
 import { runPlanCommand } from './lib/commands.js';
+import { VERSION } from './lib/version.js';
 
 export async function runCli(argv, runtime) {
   const parsed = parseArgs(argv);
@@ -10,7 +11,7 @@ export async function runCli(argv, runtime) {
   }
 
   if (parsed.version) {
-    runtime.stdout.write('tapship 0.1.0\n');
+    runtime.stdout.write(`tapship ${VERSION}\n`);
     return 0;
   }
 
