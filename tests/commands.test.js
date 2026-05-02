@@ -37,3 +37,18 @@ test('runPlanCommand auto-selects cask-only fixtures', async () => {
   assert.match(result.stdout, /Target: cask/);
   assert.doesNotMatch(result.stdout, /Formula\//);
 });
+
+test('runPlanCommand can emit json payloads', async () => {
+  const result = await runPlanCommand({
+    command: 'validate',
+    input: 'fixtures/releases/tapship-cli.json',
+    type: 'all',
+    json: true,
+    write: false,
+    outputDir: 'dist',
+  }, runtime);
+
+  const payload = JSON.parse(result.stdout);
+  assert.equal(payload.ok, true);
+  assert.equal(Array.isArray(payload.warnings), true);
+});
