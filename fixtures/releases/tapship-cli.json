@@ -19,7 +19,9 @@
     "caskToken": "tapship",
     "caskApp": "Tapship.app",
     "testCommand": "tapship --version",
-    "dependencies": ["gtar"],
+    "dependencies": [
+      "gtar"
+    ],
     "caveats": "Dry-run by default. Review generated formulae before publishing."
   },
   "assets": [
@@ -41,5 +43,6 @@
       "platform": "macos",
       "arch": "universal"
     }
-  ]
+  ],
+  "schemaVersion": 1
 }

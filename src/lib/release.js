@@ -13,6 +13,7 @@ export function normalizeRelease(payload) {
   const version = stripLeadingV(tagName ?? '0.0.0');
 
   return {
+    schemaVersion: payload.schemaVersion ?? 1,
     source: payload,
     repo: {
       owner: repo.owner,

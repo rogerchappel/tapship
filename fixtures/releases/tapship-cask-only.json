@@ -26,5 +26,6 @@
       "platform": "macos",
       "arch": "universal"
     }
-  ]
+  ],
+  "schemaVersion": 1
 }
