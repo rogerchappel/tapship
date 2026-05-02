@@ -1,79 +1,42 @@
 # Contributing
 
-Thanks for helping improve `tapship`.
+Thanks for improving `tapship`.
 
-This project values small, reviewable contributions with clear verification.
+## Ground rules
 
-## Issues
+- Keep changes small and reviewable.
+- Preserve local-first behavior.
+- Do not add hidden network access or publish flows without explicit documentation.
+- Prefer fixture-driven tests over brittle live integration tests.
 
-Before opening an issue:
+## Setup
 
-- Search existing issues.
-- Confirm the issue applies to `tapship`.
-- Include enough context for maintainers to understand or reproduce the request.
-
-Bug reports should include:
-
-- What happened.
-- What you expected.
-- Steps to reproduce.
-- Relevant logs, screenshots, or files.
-- The smallest verification step that demonstrates the issue.
-
-Feature requests should include:
-
-- The use case.
-- Why the current project does not solve it.
-- Risks or compatibility concerns.
-- Suggested files or behavior that may need to change.
-
-## Pull Requests
-
-Pull requests should:
-
-- Focus on one reviewable intent.
-- Use a branch.
-- Follow Conventional Commits.
-- Include tests or verification appropriate to the change.
-- Update documentation when behavior or usage changes.
-- Avoid unrelated formatting or dependency churn.
-- Avoid secrets, private contact details, and project-specific sensitive information.
-
-## Review Pack
-
-Use this format for meaningful changes:
-
-```md
-## Review Pack
-Repo:
-Branch:
-PR:
-Task:
-Status: done / blocked / needs review
-Summary:
-Commits:
-Files changed:
-Verification:
-Risk level:
-Rollback plan:
-Human decision needed:
-Next recommended task:
+```sh
+npm install
+npm test
+bash scripts/validate.sh
 ```
 
-## Verification
+## Useful checks
 
-Every contribution should include verification.
+```sh
+npm run check
+npm run build
+npm run smoke
+```
 
-Examples:
+## Fixtures
 
-- Documentation: inspect rendered Markdown or review the diff.
-- Tests: run the targeted test command.
-- Types: run the project typecheck.
-- Build: run the smallest build command that covers the change.
-- Manual QA: provide exact steps and observed result.
+Add or update fixture JSON under `fixtures/releases/` when you change generation behavior. Every new behavior should have a deterministic example fixture or test.
 
-If verification cannot be run, explain why and provide the exact command maintainers should run.
+## Pull requests
 
-## Maintainer Review
+Include:
 
-Maintainers may request narrower scope, clearer verification, additional tests, or safer defaults before merging.
+- a short summary
+- the exact verification commands you ran
+- any fixture updates needed to reproduce the change
+
+## Safety
+
+Changes that introduce network access, credentials, or publish behavior need explicit maintainer approval first.
