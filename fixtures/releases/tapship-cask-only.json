@@ -1,0 +1,30 @@
+{
+  "repo": {
+    "owner": "rogerchappel",
+    "name": "tapship",
+    "description": "Local-first release helper for Homebrew tap drafts.",
+    "homepage": "https://github.com/rogerchappel/tapship",
+    "license": "MIT",
+    "tap": {
+      "owner": "rogerchappel",
+      "name": "homebrew-tap"
+    }
+  },
+  "tagName": "v2.0.0",
+  "brew": {
+    "formulaClass": "Tapship",
+    "caskToken": "tapship-preview",
+    "caskApp": "Tapship Preview.app"
+  },
+  "assets": [
+    {
+      "name": "tapship-v2.0.0-macos-universal.pkg",
+      "url": "https://example.com/tapship-v2.0.0-macos-universal.pkg",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "pkg": "Tapship.pkg",
+      "kind": "cask",
+      "platform": "macos",
+      "arch": "universal"
+    }
+  ]
+}
