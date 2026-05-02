@@ -16,3 +16,10 @@ test('validateRelease blocks missing formula asset when formula requested', () =
   assert.equal(validation.ok, false);
   assert.match(validation.errors.join('\n'), /no formula-compatible asset found/);
 });
+
+test('validateRelease rejects invalid schema version', () => {
+  const broken = normalizeRelease({ ...fixture, schemaVersion: 0 });
+  const validation = validateRelease(broken, 'all');
+  assert.equal(validation.ok, false);
+  assert.match(validation.errors.join('\n'), /schemaVersion/);
+});

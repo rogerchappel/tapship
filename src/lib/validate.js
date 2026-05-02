@@ -9,6 +9,7 @@ export function validateRelease(release, requestedType = 'all') {
   const warnings = [];
   const { formulaAssets, caskAssets } = classifyAssets(release);
 
+  if (!Number.isInteger(release.schemaVersion) || release.schemaVersion < 1) errors.push('schemaVersion must be a positive integer');
   if (!release.repo.owner || !release.repo.name) errors.push('repo.owner and repo.name are required');
   if (!release.release.tagName || !SEMVER.test(release.release.tagName)) errors.push('release tagName must look like v1.2.3');
 
