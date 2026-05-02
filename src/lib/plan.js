@@ -46,6 +46,12 @@ export async function buildPlan(release, options = {}) {
 
   const result = {
     ok: validation.ok,
+    summary: {
+      repo: `${release.repo.owner}/${release.repo.name}`,
+      version: release.release.version,
+      target: requestedType,
+      generated: outputs.map((output) => output.path),
+    },
     validation,
     outputs,
     writeMode: Boolean(options.write),

@@ -40,7 +40,12 @@ function renderValidationText(validation) {
 }
 
 function renderPlanText(plan) {
-  const lines = [`Plan: ${plan.ok ? 'ready' : 'blocked'}`, `Mode: ${plan.writeMode ? 'write' : 'dry-run'}`];
+  const lines = [
+    `Plan: ${plan.ok ? 'ready' : 'blocked'}`,
+    `Repo: ${plan.summary.repo}@${plan.summary.version}`,
+    `Target: ${plan.summary.target}`,
+    `Mode: ${plan.writeMode ? 'write' : 'dry-run'}`
+  ];
   for (const output of plan.outputs) {
     lines.push(`- ${output.kind}: ${output.path}`);
   }
