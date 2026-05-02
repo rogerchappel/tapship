@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { classifyAssets } from './classify.js';
+import { pickPrimaryAsset } from './select-assets.js';
 import { renderFormula } from './render-formula.js';
 import { renderCask } from './render-cask.js';
 import { renderInstallBlock, renderReleaseChecklist } from './render-docs.js';
@@ -12,19 +13,22 @@ export async function buildPlan(release, options = {}) {
   const { formulaAssets, caskAssets } = classifyAssets(release);
   const outputs = [];
 
-  if ((requestedType === 'formula' || requestedType === 'all') && formulaAssets[0]) {
+  const primaryFormulaAsset = pickPrimaryAsset(formulaAssets);
+  const primaryCaskAsset = pickPrimaryAsset(caskAssets);
+
+  if ((requestedType === 'formula' || requestedType === 'all') && primaryFormulaAsset) {
     outputs.push({
       kind: 'formula',
       path: `Formula/${release.repo.name}.rb`,
-      content: renderFormula(release, formulaAssets[0]),
+      content: renderFormula(release, primaryFormulaAsset),
     });
   }
 
-  if ((requestedType === 'cask' || requestedType === 'all') && caskAssets[0]) {
+  if ((requestedType === 'cask' || requestedType === 'all') && primaryCaskAsset) {
     outputs.push({
       kind: 'cask',
       path: `Casks/${release.brew.caskToken}.rb`,
-      content: renderCask(release, caskAssets[0]),
+      content: renderCask(release, primaryCaskAsset),
     });
   }
 
