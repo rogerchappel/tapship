@@ -22,3 +22,18 @@ test('runPlanCommand renders human-readable plan output', async () => {
   assert.match(result.stdout, /Repo: rogerchappel\/tapship@1.2.3/);
   assert.match(result.stdout, /formula: Formula\/tapship\.rb/);
 });
+
+test('runPlanCommand auto-selects cask-only fixtures', async () => {
+  const result = await runPlanCommand({
+    command: 'plan',
+    input: 'fixtures/releases/tapship-cask-only.json',
+    type: 'auto',
+    json: false,
+    write: false,
+    outputDir: 'dist',
+  }, runtime);
+
+  assert.equal(result.exitCode, 0);
+  assert.match(result.stdout, /Target: cask/);
+  assert.doesNotMatch(result.stdout, /Formula\//);
+});
