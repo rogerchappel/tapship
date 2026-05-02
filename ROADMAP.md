@@ -1,38 +1,24 @@
 # Roadmap
 
-This roadmap describes intended direction, not a binding delivery promise.
-Review it regularly and update it as the project learns from users,
-contributors, and implementation constraints.
-
 ## Now
 
-- Define the smallest useful project scope.
-- Keep repository setup, documentation, and verification easy for contributors
-  to follow.
-- Ship small, reviewable improvements.
+- Keep the fixture format stable enough for early adopters.
+- Improve formula and cask draft ergonomics.
+- Expand tests around edge-case asset naming.
 
 ## Next
 
-- Add the next capabilities that directly support the project's primary users.
-- Improve tests, docs, and examples around the most used workflows.
-- Reduce setup friction discovered during early use.
+- Add optional fixture schema versioning.
+- Support more cask artifact variants.
+- Generate bottle note scaffolding when releases include multiple CPU targets.
 
 ## Later
 
-- Consider larger features after the core workflow is stable.
-- Add automation only where it removes repeated maintainer work.
-- Revisit packaging, deployment, or integration options based on real demand.
+- Add import helpers for exported GitHub release JSON dumps.
+- Add optional custom templates for teams with a house tap style.
 
-## Not Planned
+## Not planned
 
-- Unrelated platform rewrites without a clear migration path.
-- Mandatory dependencies on a single ecosystem unless the project requires it.
-- Public release dates before maintainers are ready to commit to them.
-
-## Roadmap Review
-
-Before each major or meaningful minor release:
-
-- Move completed user-visible work into `CHANGELOG.md`.
-- Remove stale commitments.
-- Promote only the next reviewable set of work into `Now`.
+- Direct publishing to Homebrew taps.
+- Automatic GitHub release edits.
+- Any default network sync step.
