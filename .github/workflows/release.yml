@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  RELEASEBOX_REF: v0.1.0
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install ReleaseBox
+        run: |
+          git clone --depth 1 --branch "$RELEASEBOX_REF" https://github.com/rogerchappel/releasebox.git .releasebox
+          npm ci --prefix .releasebox
+          npm run build --prefix .releasebox
+      - run: npm ci
+      - run: npm run release:check
+      - name: ReleaseBox readiness check
+        run: node .releasebox/bin/releasebox.js check .
+      - name: Generate release notes
+        run: node .releasebox/bin/releasebox.js notes . > RELEASE_NOTES.md
+      - run: npm pack
+      - uses: softprops/action-gh-release@v2
+        with:
+          body_path: RELEASE_NOTES.md
+          files: '*.tgz'
