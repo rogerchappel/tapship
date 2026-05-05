@@ -1,12 +1,14 @@
 # Release candidate readiness
 
-Generated: 2026-05-05T21:28:12Z
-Branch: `release-candidate/readiness`
+Generated: 2026-05-05T21:30:08Z
+Branch: `rc/release-readiness`
 Base: `main`
 
 ## Verification
 
 Status: PASS
+
+Note: this follow-up PR keeps an open release-readiness review after the earlier `release-candidate/readiness` PR was merged.
 
 Checks run:
 - `npm ci`
@@ -22,11 +24,11 @@ Checks run:
     ```
     ```text
     
-    up to date, audited 1 package in 107ms
+    up to date, audited 1 package in 244ms
     
     found 0 vulnerabilities
     ```
-    RESULT: 0 (0s)
+    RESULT: 0
     
     ## npm run release:check
     ```
@@ -41,25 +43,25 @@ Checks run:
     > tapship@0.1.0 test
     > node --test
     
-    ✔ parseArgs keeps plan defaults (3.577333ms)
-    ✔ parseArgs supports explicit command and flags (2.978ms)
-    ✔ cli writes formula output when requested (106.455875ms)
-    ✔ cli validate returns failure for missing formula asset (70.568ms)
-    ✔ runPlanCommand renders human-readable plan output (5.083667ms)
-    ✔ runPlanCommand auto-selects cask-only fixtures (1.213875ms)
-    ✔ runPlanCommand can emit json payloads (1.972708ms)
-    ✔ buildPlan returns expected outputs in dry-run mode (3.37375ms)
-    ✔ buildPlan writes generated files when requested (12.938875ms)
-    ✔ normalizeRelease derives version and repo defaults (0.780833ms)
-    ✔ classifyFormulaClass converts kebab case to ruby constant (0.179292ms)
-    ✔ renderFormula includes install stanza (0.739917ms)
-    ✔ renderCask includes url and artifact (0.087917ms)
-    ✔ renderInstallBlock emits brew commands (0.944375ms)
-    ✔ pickPrimaryAsset prefers arm64 darwin archives (3.648375ms)
-    ✔ validateRelease accepts complete all-target fixture (2.772375ms)
-    ✔ validateRelease blocks missing formula asset when formula requested (0.1845ms)
-    ✔ validateRelease rejects invalid schema version (0.086666ms)
-    ✔ VERSION is sourced from package metadata (1.578625ms)
+    ✔ parseArgs keeps plan defaults (3.005959ms)
+    ✔ parseArgs supports explicit command and flags (0.086833ms)
+    ✔ cli writes formula output when requested (73.036792ms)
+    ✔ cli validate returns failure for missing formula asset (58.406417ms)
+    ✔ runPlanCommand renders human-readable plan output (7.203084ms)
+    ✔ runPlanCommand auto-selects cask-only fixtures (1.113792ms)
+    ✔ runPlanCommand can emit json payloads (1.15825ms)
+    ✔ buildPlan returns expected outputs in dry-run mode (4.471958ms)
+    ✔ buildPlan writes generated files when requested (7.982292ms)
+    ✔ normalizeRelease derives version and repo defaults (1.323542ms)
+    ✔ classifyFormulaClass converts kebab case to ruby constant (0.383208ms)
+    ✔ renderFormula includes install stanza (1.381417ms)
+    ✔ renderCask includes url and artifact (0.088208ms)
+    ✔ renderInstallBlock emits brew commands (0.065458ms)
+    ✔ pickPrimaryAsset prefers arm64 darwin archives (1.526875ms)
+    ✔ validateRelease accepts complete all-target fixture (0.921791ms)
+    ✔ validateRelease blocks missing formula asset when formula requested (0.273292ms)
+    ✔ validateRelease rejects invalid schema version (0.1115ms)
+    ✔ VERSION is sourced from package metadata (0.602791ms)
     ℹ tests 19
     ℹ suites 0
     ℹ pass 19
@@ -67,7 +69,7 @@ Checks run:
     ℹ cancelled 0
     ℹ skipped 0
     ℹ todo 0
-    ℹ duration_ms 394.851292
+    ℹ duration_ms 250.163875
     
     > tapship@0.1.0 check
     > node scripts/check.js
@@ -108,25 +110,25 @@ Checks run:
     > tapship@0.1.0 test
     > node --test
     
-    ✔ parseArgs keeps plan defaults (2.691166ms)
-    ✔ parseArgs supports explicit command and flags (0.185416ms)
-    ✔ cli writes formula output when requested (82.815334ms)
-    ✔ cli validate returns failure for missing formula asset (64.364916ms)
-    ✔ runPlanCommand renders human-readable plan output (6.777917ms)
-    ✔ runPlanCommand auto-selects cask-only fixtures (0.764292ms)
-    ✔ runPlanCommand can emit json payloads (0.91175ms)
-    ✔ buildPlan returns expected outputs in dry-run mode (4.955667ms)
-    ✔ buildPlan writes generated files when requested (5.554958ms)
-    ✔ normalizeRelease derives version and repo defaults (1.769917ms)
-    ✔ classifyFormulaClass converts kebab case to ruby constant (0.240208ms)
-    ✔ renderFormula includes install stanza (7.091042ms)
-    ✔ renderCask includes url and artifact (0.567166ms)
-    ✔ renderInstallBlock emits brew commands (0.418667ms)
-    ✔ pickPrimaryAsset prefers arm64 darwin archives (1.430458ms)
-    ✔ validateRelease accepts complete all-target fixture (2.011166ms)
-    ✔ validateRelease blocks missing formula asset when formula requested (0.697708ms)
-    ✔ validateRelease rejects invalid schema version (0.480375ms)
-    ✔ VERSION is sourced from package metadata (0.866042ms)
+    ✔ parseArgs keeps plan defaults (2.002917ms)
+    ✔ parseArgs supports explicit command and flags (0.276166ms)
+    ✔ cli writes formula output when requested (80.778333ms)
+    ✔ cli validate returns failure for missing formula asset (52.277208ms)
+    ✔ runPlanCommand renders human-readable plan output (4.51925ms)
+    ✔ runPlanCommand auto-selects cask-only fixtures (0.825917ms)
+    ✔ runPlanCommand can emit json payloads (0.624833ms)
+    ✔ buildPlan returns expected outputs in dry-run mode (5.019542ms)
+    ✔ buildPlan writes generated files when requested (11.05975ms)
+    ✔ normalizeRelease derives version and repo defaults (0.645416ms)
+    ✔ classifyFormulaClass converts kebab case to ruby constant (0.097708ms)
+    ✔ renderFormula includes install stanza (0.641625ms)
+    ✔ renderCask includes url and artifact (0.075709ms)
+    ✔ renderInstallBlock emits brew commands (0.06425ms)
+    ✔ pickPrimaryAsset prefers arm64 darwin archives (0.593375ms)
+    ✔ validateRelease accepts complete all-target fixture (0.791042ms)
+    ✔ validateRelease blocks missing formula asset when formula requested (0.123375ms)
+    ✔ validateRelease rejects invalid schema version (0.074208ms)
+    ✔ VERSION is sourced from package metadata (0.614125ms)
     ℹ tests 19
     ℹ suites 0
     ℹ pass 19
@@ -134,7 +136,7 @@ Checks run:
     ℹ cancelled 0
     ℹ skipped 0
     ℹ todo 0
-    ℹ duration_ms 425.7125
+    ℹ duration_ms 257.437292
     PASS: package script: test
     
     > tapship@0.1.0 build
@@ -156,7 +158,7 @@ Checks run:
     npm notice 855B docs/ORCHESTRATION.md
     npm notice 2.1kB docs/PRD.md
     npm notice 285B docs/README.md
-    npm notice 9.3kB docs/release-candidate.md
+    npm notice 9.6kB docs/release-candidate.md
     npm notice 735B docs/TASKS.md
     npm notice 1.1kB package.json
     npm notice 786B src/cli.js
@@ -177,15 +179,15 @@ Checks run:
     npm notice name: tapship
     npm notice version: 0.1.0
     npm notice filename: tapship-0.1.0.tgz
-    npm notice package size: 11.0 kB
-    npm notice unpacked size: 34.7 kB
-    npm notice shasum: 6dc34f811e2cb32f7bac9298ca6cf683b4bd14af
-    npm notice integrity: sha512-FKTIP9auVruZu[...]hAe+5P+zyiYrQ==
+    npm notice package size: 11.1 kB
+    npm notice unpacked size: 35.0 kB
+    npm notice shasum: 25f87aa5b20411ae80adcd9eab66dee15be651e4
+    npm notice integrity: sha512-jY/f4opHm0Upv[...]3DDOJXXWv1JmQ==
     npm notice total files: 25
     npm notice
     tapship-0.1.0.tgz
     ```
-    RESULT: 0 (4s)
+    RESULT: 0
     
     ## bash scripts/validate.sh
     ```
@@ -217,25 +219,25 @@ Checks run:
     > tapship@0.1.0 test
     > node --test
     
-    ✔ parseArgs keeps plan defaults (2.511833ms)
-    ✔ parseArgs supports explicit command and flags (0.083542ms)
-    ✔ cli writes formula output when requested (83.277ms)
-    ✔ cli validate returns failure for missing formula asset (67.897292ms)
-    ✔ runPlanCommand renders human-readable plan output (5.914ms)
-    ✔ runPlanCommand auto-selects cask-only fixtures (1.349125ms)
-    ✔ runPlanCommand can emit json payloads (1.629791ms)
-    ✔ buildPlan returns expected outputs in dry-run mode (2.36125ms)
-    ✔ buildPlan writes generated files when requested (11.393791ms)
-    ✔ normalizeRelease derives version and repo defaults (0.658375ms)
-    ✔ classifyFormulaClass converts kebab case to ruby constant (0.09475ms)
-    ✔ renderFormula includes install stanza (1.525209ms)
-    ✔ renderCask includes url and artifact (0.107458ms)
-    ✔ renderInstallBlock emits brew commands (0.175875ms)
-    ✔ pickPrimaryAsset prefers arm64 darwin archives (3.014667ms)
-    ✔ validateRelease accepts complete all-target fixture (0.844875ms)
-    ✔ validateRelease blocks missing formula asset when formula requested (0.131792ms)
-    ✔ validateRelease rejects invalid schema version (0.08475ms)
-    ✔ VERSION is sourced from package metadata (0.575083ms)
+    ✔ parseArgs keeps plan defaults (1.74625ms)
+    ✔ parseArgs supports explicit command and flags (0.078458ms)
+    ✔ cli writes formula output when requested (61.7095ms)
+    ✔ cli validate returns failure for missing formula asset (52.852625ms)
+    ✔ runPlanCommand renders human-readable plan output (7.182792ms)
+    ✔ runPlanCommand auto-selects cask-only fixtures (2.591042ms)
+    ✔ runPlanCommand can emit json payloads (1.014084ms)
+    ✔ buildPlan returns expected outputs in dry-run mode (1.601ms)
+    ✔ buildPlan writes generated files when requested (9.383291ms)
+    ✔ normalizeRelease derives version and repo defaults (1.125ms)
+    ✔ classifyFormulaClass converts kebab case to ruby constant (0.105042ms)
+    ✔ renderFormula includes install stanza (0.645333ms)
+    ✔ renderCask includes url and artifact (0.075792ms)
+    ✔ renderInstallBlock emits brew commands (0.071792ms)
+    ✔ pickPrimaryAsset prefers arm64 darwin archives (0.656667ms)
+    ✔ validateRelease accepts complete all-target fixture (0.872541ms)
+    ✔ validateRelease blocks missing formula asset when formula requested (0.14075ms)
+    ✔ validateRelease rejects invalid schema version (0.081042ms)
+    ✔ VERSION is sourced from package metadata (1.373209ms)
     ℹ tests 19
     ℹ suites 0
     ℹ pass 19
@@ -243,7 +245,7 @@ Checks run:
     ℹ cancelled 0
     ℹ skipped 0
     ℹ todo 0
-    ℹ duration_ms 330.189042
+    ℹ duration_ms 379.68325
     PASS: package script: test
     
     > tapship@0.1.0 build
@@ -255,7 +257,7 @@ Checks run:
     
     Validation passed.
     ```
-    RESULT: 0 (1s)
+    RESULT: 0
     
     ## ReleaseBox check
     ```
@@ -273,5 +275,5 @@ Checks run:
     ✅ smoke script: node scripts/smoke.js
     ✅ bin entry: {"tapship":"./bin/tapship.js"}
     ```
-    RESULT: 0 (0s)
+    RESULT: 0
     
