@@ -35,7 +35,7 @@ jobs:
       - name: Generate release notes
         run: node .releasebox/bin/releasebox.js notes . > RELEASE_NOTES.md
       - run: npm pack
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           body_path: RELEASE_NOTES.md
           files: '*.tgz'
