@@ -25,7 +25,8 @@
     "test": "node --test",
     "build": "node scripts/build.js",
     "smoke": "node scripts/smoke.js",
-    "release:check": "npm test && npm run check && npm run build && npm run smoke && bash scripts/validate.sh && npm pack --dry-run"
+    "package:smoke": "npm pack --dry-run",
+    "release:check": "npm test && npm run check && npm run build && npm run smoke && bash scripts/validate.sh && npm run package:smoke"
   },
   "keywords": [
     "homebrew",
