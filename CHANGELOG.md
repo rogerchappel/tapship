@@ -4,6 +4,10 @@ All notable changes to this project will be documented here.
 
 ## [Unreleased]
 
+### Changed
+
+- Added a named package smoke script and CI step for npm pack verification.
+
 ### Added
 
 - Local-first CLI for Homebrew formula/cask draft generation.
