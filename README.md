@@ -83,6 +83,7 @@ bash scripts/validate.sh
 npm run check
 npm run build
 npm run smoke
+npm run package:smoke
 ```
 
 ## Docs
@@ -103,4 +104,6 @@ Before publishing or handing a branch to automation, run:
 npm run release:check
 ```
 
-This runs the project verification scripts, including the package smoke check where configured.
+This runs the project verification scripts, including an npm package smoke that
+installs the tarball and renders a fixture-backed Homebrew plan through the
+published CLI.

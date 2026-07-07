@@ -4,7 +4,7 @@
   "description": "Local-first CLI for drafting Homebrew tap assets from release metadata fixtures.",
   "type": "module",
   "bin": {
-    "tapship": "./bin/tapship.js"
+    "tapship": "bin/tapship.js"
   },
   "main": "./src/index.js",
   "exports": {
@@ -14,6 +14,7 @@
     "bin",
     "src",
     "docs",
+    "fixtures",
     "README.md",
     "LICENSE",
     "SECURITY.md",
@@ -26,7 +27,7 @@
     "build": "node scripts/build.js",
     "smoke": "node scripts/smoke.js",
     "release:check": "npm test && npm run check && npm run build && npm run smoke && bash scripts/validate.sh && npm run package:smoke",
-    "package:smoke": "npm pack --dry-run"
+    "package:smoke": "node scripts/package-smoke.mjs"
   },
   "keywords": [
     "homebrew",
@@ -47,5 +48,9 @@
   "homepage": "https://github.com/rogerchappel/tapship",
   "bugs": {
     "url": "https://github.com/rogerchappel/tapship/issues"
+  },
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
   }
 }
