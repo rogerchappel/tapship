@@ -8,8 +8,11 @@ Usage:
 
 Defaults:
   - dry-run by default; use --write to write generated files.
+  - --write creates files only after validation succeeds.
   - command defaults to 'plan' when omitted.
 `;
+
+const VALID_TYPES = new Set(['auto', 'formula', 'cask', 'all']);
 
 export function parseArgs(argv) {
   const args = [...argv];
@@ -41,7 +44,13 @@ export function parseArgs(argv) {
     else if (token === '--json') parsed.json = true;
     else if (token === '--write') parsed.write = true;
     else if (token === '--input') parsed.input = args[++index] ?? null;
-    else if (token === '--type') parsed.type = args[++index] ?? 'all';
+    else if (token === '--type') {
+      const type = args[++index];
+      if (!VALID_TYPES.has(type)) {
+        throw new Error(`Invalid --type value: ${type ?? '(missing)'}. Expected auto, formula, cask, or all.`);
+      }
+      parsed.type = type;
+    }
     else if (token === '--output') parsed.outputDir = args[++index] ?? 'dist';
     else throw new Error(`Unknown argument: ${token}`);
   }

@@ -57,7 +57,7 @@ export async function buildPlan(release, options = {}) {
     writeMode: Boolean(options.write),
   };
 
-  if (options.write) {
+  if (options.write && validation.ok) {
     const baseDir = path.resolve(options.cwd ?? process.cwd(), options.outputDir ?? 'dist');
     for (const output of outputs) {
       const fullPath = path.join(baseDir, output.path);
