@@ -52,7 +52,7 @@ node bin/tapship.js validate --input fixtures/releases/tapship-cli.json
 
 ## Generated output
 
-When `--write` is passed, tapship writes files like:
+When `--write` is passed and validation succeeds, tapship writes files like:
 
 - `Formula/tapship.rb`
 - `Casks/tapship.rb`
@@ -73,6 +73,8 @@ brew install --cask tapship
 - No GitHub API usage.
 - No tap pushes.
 - No writes outside the requested output directory.
+- Invalid `--type` values fail before planning; accepted values are `auto`, `formula`, `cask`, and `all`.
+- Failed validation never creates the requested output directory or files, even with `--write`.
 - Dry-run by default.
 
 ## Verification
