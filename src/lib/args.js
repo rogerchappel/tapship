@@ -14,6 +14,14 @@ Defaults:
 
 const VALID_TYPES = new Set(['auto', 'formula', 'cask', 'all']);
 
+function takeOptionValue(args, index, option) {
+  const value = args[index + 1];
+  if (value === undefined || value.startsWith('-')) {
+    throw new Error(`Missing value for ${option}.`);
+  }
+  return value;
+}
+
 export function parseArgs(argv) {
   const args = [...argv];
   const parsed = {
@@ -43,15 +51,15 @@ export function parseArgs(argv) {
     else if (token === '--version' || token === '-v') parsed.version = true;
     else if (token === '--json') parsed.json = true;
     else if (token === '--write') parsed.write = true;
-    else if (token === '--input') parsed.input = args[++index] ?? null;
+    else if (token === '--input') parsed.input = takeOptionValue(args, index++, token);
     else if (token === '--type') {
-      const type = args[++index];
+      const type = takeOptionValue(args, index++, token);
       if (!VALID_TYPES.has(type)) {
-        throw new Error(`Invalid --type value: ${type ?? '(missing)'}. Expected auto, formula, cask, or all.`);
+        throw new Error(`Invalid --type value: ${type}. Expected auto, formula, cask, or all.`);
       }
       parsed.type = type;
     }
-    else if (token === '--output') parsed.outputDir = args[++index] ?? 'dist';
+    else if (token === '--output') parsed.outputDir = takeOptionValue(args, index++, token);
     else throw new Error(`Unknown argument: ${token}`);
   }
 

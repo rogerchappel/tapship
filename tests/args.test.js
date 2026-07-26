@@ -31,7 +31,7 @@ test('parseArgs rejects unsupported and missing type values', () => {
   );
   assert.throws(
     () => parseArgs(['plan', '--type']),
-    /Invalid --type value: \(missing\)\. Expected auto, formula, cask, or all\./,
+    /Missing value for --type\./,
   );
 });
 
