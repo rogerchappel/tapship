@@ -1,7 +1,7 @@
 const HELP_TEXT = `tapship
 
 Usage:
-  tapship plan --input <release.json> [--type auto|formula|cask|all] [--json] [--write]
+  tapship plan --input <release.json> [--type auto|formula|cask|all] [--json] [--write] [--output <directory>]
   tapship validate --input <release.json> [--json]
   tapship --help
   tapship --version
@@ -9,6 +9,7 @@ Usage:
 Defaults:
   - dry-run by default; use --write to write generated files.
   - --write creates files only after validation succeeds.
+  - --input, --type, and --output require values.
   - command defaults to 'plan' when omitted.
 `;
 
