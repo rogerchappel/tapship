@@ -35,6 +35,22 @@ test('cli rejects an invalid type with a clear diagnostic', () => {
   assert.match(result.stderr, /Invalid --type value: nonsense/);
 });
 
+for (const { name, args, option } of [
+  { name: 'bare --input', args: ['plan', '--input'], option: '--input' },
+  { name: '--input followed by a flag', args: ['plan', '--input', '--json'], option: '--input' },
+  { name: 'bare --output', args: ['plan', '--output'], option: '--output' },
+  { name: '--output followed by a flag', args: ['plan', '--output', '--write'], option: '--output' },
+]) {
+  test(`cli rejects ${name} with a concise diagnostic`, () => {
+    const result = spawnSync('node', ['bin/tapship.js', ...args], {
+      encoding: 'utf8',
+    });
+
+    assert.equal(result.status, 1);
+    assert.equal(result.stderr, `Missing value for ${option}.\n`);
+  });
+}
+
 test('cli does not create output when validation blocks a write', async () => {
   const parentDir = await mkdtemp(path.join(os.tmpdir(), 'tapship-cli-blocked-'));
   const outputDir = path.join(parentDir, 'output');

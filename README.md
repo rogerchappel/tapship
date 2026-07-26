@@ -73,6 +73,7 @@ brew install --cask tapship
 - No GitHub API usage.
 - No tap pushes.
 - No writes outside the requested output directory.
+- `--input`, `--type`, and `--output` require values; another option is not accepted as a value.
 - Invalid `--type` values fail before planning; accepted values are `auto`, `formula`, `cask`, and `all`.
 - Failed validation never creates the requested output directory or files, even with `--write`.
 - Dry-run by default.

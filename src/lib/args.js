@@ -1,7 +1,7 @@
 const HELP_TEXT = `tapship
 
 Usage:
-  tapship plan --input <release.json> [--type auto|formula|cask|all] [--json] [--write]
+  tapship plan --input <release.json> [--type auto|formula|cask|all] [--json] [--write] [--output <directory>]
   tapship validate --input <release.json> [--json]
   tapship --help
   tapship --version
@@ -9,10 +9,26 @@ Usage:
 Defaults:
   - dry-run by default; use --write to write generated files.
   - --write creates files only after validation succeeds.
+  - --input, --type, and --output require values.
   - command defaults to 'plan' when omitted.
 `;
 
 const VALID_TYPES = new Set(['auto', 'formula', 'cask', 'all']);
+
+class ArgumentError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'ArgumentError';
+  }
+}
+
+function takeOptionValue(args, index, option) {
+  const value = args[index + 1];
+  if (value === undefined || value.startsWith('-')) {
+    throw new ArgumentError(`Missing value for ${option}.`);
+  }
+  return value;
+}
 
 export function parseArgs(argv) {
   const args = [...argv];
@@ -43,16 +59,16 @@ export function parseArgs(argv) {
     else if (token === '--version' || token === '-v') parsed.version = true;
     else if (token === '--json') parsed.json = true;
     else if (token === '--write') parsed.write = true;
-    else if (token === '--input') parsed.input = args[++index] ?? null;
+    else if (token === '--input') parsed.input = takeOptionValue(args, index++, token);
     else if (token === '--type') {
-      const type = args[++index];
+      const type = takeOptionValue(args, index++, token);
       if (!VALID_TYPES.has(type)) {
-        throw new Error(`Invalid --type value: ${type ?? '(missing)'}. Expected auto, formula, cask, or all.`);
+        throw new ArgumentError(`Invalid --type value: ${type}. Expected auto, formula, cask, or all.`);
       }
       parsed.type = type;
     }
-    else if (token === '--output') parsed.outputDir = args[++index] ?? 'dist';
-    else throw new Error(`Unknown argument: ${token}`);
+    else if (token === '--output') parsed.outputDir = takeOptionValue(args, index++, token);
+    else throw new ArgumentError(`Unknown argument: ${token}`);
   }
 
   return parsed;
