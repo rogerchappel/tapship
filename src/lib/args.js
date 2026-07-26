@@ -14,10 +14,17 @@ Defaults:
 
 const VALID_TYPES = new Set(['auto', 'formula', 'cask', 'all']);
 
+class ArgumentError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'ArgumentError';
+  }
+}
+
 function takeOptionValue(args, index, option) {
   const value = args[index + 1];
   if (value === undefined || value.startsWith('-')) {
-    throw new Error(`Missing value for ${option}.`);
+    throw new ArgumentError(`Missing value for ${option}.`);
   }
   return value;
 }
@@ -55,12 +62,12 @@ export function parseArgs(argv) {
     else if (token === '--type') {
       const type = takeOptionValue(args, index++, token);
       if (!VALID_TYPES.has(type)) {
-        throw new Error(`Invalid --type value: ${type}. Expected auto, formula, cask, or all.`);
+        throw new ArgumentError(`Invalid --type value: ${type}. Expected auto, formula, cask, or all.`);
       }
       parsed.type = type;
     }
     else if (token === '--output') parsed.outputDir = takeOptionValue(args, index++, token);
-    else throw new Error(`Unknown argument: ${token}`);
+    else throw new ArgumentError(`Unknown argument: ${token}`);
   }
 
   return parsed;
