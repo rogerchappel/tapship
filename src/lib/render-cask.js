@@ -1,5 +1,17 @@
+import { rubyString } from './ruby.js';
+
 export function renderCask(release, asset) {
-  const artifact = asset.pkg ? `  pkg \"${asset.pkg}\"\n` : asset.app ? `  app \"${asset.app}\"\n` : `  binary \"${asset.binary ?? release.brew.caskBinary}\"\n`;
+  const artifact = asset.pkg ? `  pkg ${rubyString(asset.pkg)}\n` : asset.app ? `  app ${rubyString(asset.app)}\n` : `  binary ${rubyString(asset.binary ?? release.brew.caskBinary)}\n`;
   const uninstall = asset.pkg ? '\n  uninstall pkgutil: []\n' : '';
-  return `cask \"${release.brew.caskToken}\" do\n  version \"${release.release.version}\"\n  sha256 \"${asset.sha256}\"\n\n  url \"${asset.url}\"\n  name \"${release.repo.name}\"\n  desc \"${release.repo.description}\"\n  homepage \"${release.repo.homepage}\"\n\n${artifact}${uninstall}end\n`;
+  return `cask ${rubyString(release.brew.caskToken)} do
+  version ${rubyString(release.release.version)}
+  sha256 ${rubyString(asset.sha256)}
+
+  url ${rubyString(asset.url)}
+  name ${rubyString(release.repo.name)}
+  desc ${rubyString(release.repo.description)}
+  homepage ${rubyString(release.repo.homepage)}
+
+${artifact}${uninstall}end
+`;
 }
