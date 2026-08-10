@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { access, mkdtemp, readFile } from 'node:fs/promises';
+import { access, mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -62,3 +62,24 @@ test('cli does not create output when validation blocks a write', async () => {
   assert.match(result.stdout, /no formula-compatible asset found/);
   await assert.rejects(access(outputDir), { code: 'ENOENT' });
 });
+
+for (const { name, patch, diagnostic } of [
+  { name: 'invalid SemVer tag', patch: { tagName: 'v1.2.3-..' }, diagnostic: /valid SemVer/ },
+  { name: 'unsupported schema', patch: { schemaVersion: 2 }, diagnostic: /unsupported schemaVersion 2/ },
+]) {
+  test(`cli json validation rejects ${name}`, async () => {
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), 'tapship-cli-json-'));
+    const source = JSON.parse(await readFile('fixtures/releases/tapship-cli.json', 'utf8'));
+    const input = path.join(tempDir, 'release.json');
+    await writeFile(input, JSON.stringify({ ...source, ...patch }));
+
+    const result = spawnSync('node', ['bin/tapship.js', 'validate', '--input', input, '--json'], {
+      encoding: 'utf8',
+    });
+
+    assert.equal(result.status, 1);
+    const validation = JSON.parse(result.stdout);
+    assert.equal(validation.ok, false);
+    assert.match(validation.errors.join('\n'), diagnostic);
+  });
+}
