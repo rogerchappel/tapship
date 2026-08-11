@@ -1,6 +1,6 @@
 import { classifyAssets } from './classify.js';
 
-const SEMVER = /^v?\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/;
+const SEMVER = /^v?(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-(?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*)(?:\.(?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*))*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$/;
 const SHA256 = /^[a-f0-9]{64}$/;
 const SAFE_NAME = /^[A-Za-z0-9][A-Za-z0-9._-]+$/;
 
@@ -9,9 +9,17 @@ export function validateRelease(release, requestedType = 'all') {
   const warnings = [];
   const { formulaAssets, caskAssets } = classifyAssets(release);
 
-  if (!Number.isInteger(release.schemaVersion) || release.schemaVersion < 1) errors.push('schemaVersion must be a positive integer');
+  if (release.schemaVersion !== 1) {
+    if (Number.isInteger(release.schemaVersion) && release.schemaVersion > 1) {
+      errors.push(`unsupported schemaVersion ${release.schemaVersion}; only schemaVersion 1 is supported`);
+    } else {
+      errors.push('schemaVersion must be 1');
+    }
+  }
   if (!release.repo.owner || !release.repo.name) errors.push('repo.owner and repo.name are required');
-  if (!release.release.tagName || !SEMVER.test(release.release.tagName)) errors.push('release tagName must look like v1.2.3');
+  if (!release.release.tagName || !SEMVER.test(release.release.tagName)) {
+    errors.push('release tagName must be valid SemVer, optionally prefixed with v (for example, v1.2.3-rc.1+build.42)');
+  }
 
   for (const asset of release.assets) {
     if (!SAFE_NAME.test(asset.name)) warnings.push(`asset name contains unusual characters: ${asset.name}`);
