@@ -28,3 +28,8 @@ Optional asset fields:
 - `app` for cask app bundles
 - `pkg` for cask pkg installers
 - `platform` and `arch` for selection hints
+
+For cask assets, `platform: "macos"` also marks the generated cask as
+macOS-only, so its output includes Homebrew's `depends_on :macos` stanza.
+Generated cask descriptions omit a trailing full stop to satisfy Homebrew cask
+style; the source fixture description is otherwise preserved.
