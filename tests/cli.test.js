@@ -17,6 +17,20 @@ test('cli writes formula output when requested', async () => {
   assert.match(formula, /sha256/);
 });
 
+test('cli writes Homebrew-style metadata for a macOS-only cask', async () => {
+  const outputDir = await mkdtemp(path.join(os.tmpdir(), 'tapship-cli-cask-'));
+  const result = spawnSync('node', ['bin/tapship.js', 'plan', '--input', 'fixtures/releases/tapship-cask-only.json', '--type', 'cask', '--write', '--output', outputDir], {
+    encoding: 'utf8',
+  });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const cask = await readFile(path.join(outputDir, 'Casks/tapship-preview.rb'), 'utf8');
+  assert.match(cask, /desc "Local-first release helper for Homebrew tap drafts"/);
+  assert.match(cask, /depends_on :macos/);
+  const ruby = spawnSync('ruby', ['-c'], { input: cask, encoding: 'utf8' });
+  assert.equal(ruby.status, 0, ruby.stderr);
+});
+
 test('cli validate returns failure for missing formula asset', () => {
   const result = spawnSync('node', ['bin/tapship.js', 'validate', '--input', 'fixtures/releases/tapship-cask-only.json', '--type', 'formula'], {
     encoding: 'utf8',

@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import fixture from '../fixtures/releases/tapship-cli.json' with { type: 'json' };
+import caskOnlyFixture from '../fixtures/releases/tapship-cask-only.json' with { type: 'json' };
 import { normalizeRelease } from '../src/lib/release.js';
 import { classifyAssets } from '../src/lib/classify.js';
 import { renderFormula } from '../src/lib/render-formula.js';
@@ -27,6 +28,17 @@ test('renderCask includes url and artifact', () => {
   const output = renderCask(release, caskAssets[0]);
   assert.match(output, /cask "tapship" do/);
   assert.match(output, /app "Tapship\.app"/);
+});
+
+test('renderCask emits Homebrew-style metadata for a macOS-only fixture', () => {
+  const caskRelease = normalizeRelease(caskOnlyFixture);
+  const { caskAssets: [asset] } = classifyAssets(caskRelease);
+  const output = renderCask(caskRelease, asset);
+
+  assert.match(output, /desc "Local-first release helper for Homebrew tap drafts"/);
+  assert.doesNotMatch(output, /desc ".*\."/);
+  assert.match(output, /depends_on :macos/);
+  assertValidRuby(output);
 });
 
 test('renderFormula safely quotes fixture-controlled Ruby strings', () => {
