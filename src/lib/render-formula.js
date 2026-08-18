@@ -18,7 +18,7 @@ export function renderFormula(release, asset) {
     bin.install ${rubyString(asset.binary ?? formulaBinary)} => ${rubyString(formulaBinary)}
   end${caveats}
   test do
-    output = shell_output("#{bin}/" + ${rubyString(`${formulaBinary} --version`)})
+    output = shell_output("#{bin}/" + ${rubyString(release.brew.testCommand)})
     assert_match version.to_s, output
   end
 end
