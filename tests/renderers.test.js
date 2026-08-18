@@ -22,6 +22,18 @@ test('renderFormula includes install stanza', () => {
   const output = renderFormula(release, formulaAssets[0]);
   assert.match(output, /class Tapship < Formula/);
   assert.match(output, /bin\.install/);
+  assert.match(output, /shell_output\("#\{bin\}\/" \+ "tapship --version"\)/);
+});
+
+test('renderFormula uses the configured Homebrew test command', () => {
+  const configured = structuredClone(release);
+  configured.brew.testCommand = 'tapship doctor --quiet';
+
+  const output = renderFormula(configured, formulaAssets[0]);
+
+  assert.match(output, /shell_output\("#\{bin\}\/" \+ "tapship doctor --quiet"\)/);
+  assert.doesNotMatch(output, /tapship --version/);
+  assertValidRuby(output);
 });
 
 test('renderCask includes url and artifact', () => {

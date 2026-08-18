@@ -7,6 +7,12 @@ tapship expects a local JSON file with these top-level keys:
 - `tagName`: a SemVer release tag, optionally prefixed with `v` (for example,
   `1.2.3`, `v1.2.3-rc.1`, or `v1.2.3+build.42`)
 - `brew`: optional overrides for formula/cask rendering
+
+For formula releases, `brew.testCommand` is the command invoked by the
+generated Homebrew `test do` block. Write it as the installed formula binary
+followed by any arguments (for example, `tapship doctor --quiet`); Tapship
+resolves that binary from Homebrew's `bin` directory. When omitted, the
+command defaults to `<repo.name> --version`.
 - `assets`: array of local release asset metadata
 
 Prerelease and build identifiers must be non-empty dot-separated SemVer
