@@ -9,7 +9,9 @@ export function validateRelease(release, requestedType = 'all') {
   const warnings = [];
   const { formulaAssets, caskAssets } = classifyAssets(release);
 
-  if (release.schemaVersion !== 1) {
+  if (release.schemaVersion === undefined) {
+    errors.push('schemaVersion is required and must be 1');
+  } else if (release.schemaVersion !== 1) {
     if (Number.isInteger(release.schemaVersion) && release.schemaVersion > 1) {
       errors.push(`unsupported schemaVersion ${release.schemaVersion}; only schemaVersion 1 is supported`);
     } else {
