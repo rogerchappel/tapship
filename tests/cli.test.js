@@ -77,6 +77,40 @@ test('cli does not create output when validation blocks a write', async () => {
   await assert.rejects(access(outputDir), { code: 'ENOENT' });
 });
 
+for (const command of ['validate', 'plan']) {
+  test(`cli ${command} rejects an omitted schema version`, async () => {
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), 'tapship-cli-schema-'));
+    const source = JSON.parse(await readFile('fixtures/releases/tapship-cli.json', 'utf8'));
+    delete source.schemaVersion;
+    const input = path.join(tempDir, 'release.json');
+    await writeFile(input, JSON.stringify(source));
+
+    const result = spawnSync('node', ['bin/tapship.js', command, '--input', input], {
+      encoding: 'utf8',
+    });
+
+    assert.equal(result.status, 1);
+    assert.match(result.stdout, /schemaVersion is required/);
+  });
+}
+
+test('cli plan --write creates no output when schema version is omitted', async () => {
+  const tempDir = await mkdtemp(path.join(os.tmpdir(), 'tapship-cli-schema-write-'));
+  const source = JSON.parse(await readFile('fixtures/releases/tapship-cli.json', 'utf8'));
+  delete source.schemaVersion;
+  const input = path.join(tempDir, 'release.json');
+  const outputDir = path.join(tempDir, 'output');
+  await writeFile(input, JSON.stringify(source));
+
+  const result = spawnSync('node', ['bin/tapship.js', 'plan', '--input', input, '--write', '--output', outputDir], {
+    encoding: 'utf8',
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, /schemaVersion is required/);
+  await assert.rejects(access(outputDir), { code: 'ENOENT' });
+});
+
 for (const { name, patch, diagnostic } of [
   { name: 'invalid SemVer tag', patch: { tagName: 'v1.2.3-..' }, diagnostic: /valid SemVer/ },
   { name: 'unsupported schema', patch: { schemaVersion: 2 }, diagnostic: /unsupported schemaVersion 2/ },
