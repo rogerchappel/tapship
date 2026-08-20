@@ -70,3 +70,10 @@ for (const { schemaVersion, ok, diagnostic } of [
     if (diagnostic) assert.match(validation.errors.join('\n'), diagnostic);
   });
 }
+
+test('validateRelease requires a schema version', () => {
+  const { schemaVersion, ...withoutSchemaVersion } = fixture;
+  const validation = validateRelease(normalizeRelease(withoutSchemaVersion), 'all');
+  assert.equal(validation.ok, false);
+  assert.match(validation.errors.join('\n'), /schemaVersion is required/);
+});

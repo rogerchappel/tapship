@@ -18,8 +18,9 @@ command defaults to `<repo.name> --version`.
 Prerelease and build identifiers must be non-empty dot-separated SemVer
 identifiers. Numeric prerelease identifiers and the major, minor, and patch
 versions cannot contain leading zeroes. Build identifiers may contain leading
-zeroes, as allowed by SemVer. Fixture schema versions other than `1` are
-rejected until support for a later schema is implemented.
+zeroes, as allowed by SemVer. The `schemaVersion` key must be present. Missing
+schema versions and fixture schema versions other than `1` are rejected until
+support for a later schema is implemented.
 
 Each asset should include:
 

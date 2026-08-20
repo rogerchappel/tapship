@@ -10,6 +10,12 @@ test('normalizeRelease derives version and repo defaults', () => {
   assert.equal(release.brew.formulaClass, 'Tapship');
 });
 
+test('normalizeRelease preserves an omitted schema version for validation', () => {
+  const { schemaVersion, ...withoutSchemaVersion } = fixture;
+  const release = normalizeRelease(withoutSchemaVersion);
+  assert.equal(release.schemaVersion, undefined);
+});
+
 test('classifyFormulaClass converts kebab case to ruby constant', () => {
   assert.equal(classifyFormulaClass('tap-ship'), 'TapShip');
 });
