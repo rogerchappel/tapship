@@ -17,6 +17,23 @@ test('cli writes formula output when requested', async () => {
   assert.match(formula, /sha256/);
 });
 
+test('cli validates and renders a formula fixture without asset.binary', async () => {
+  const tempDir = await mkdtemp(path.join(os.tmpdir(), 'tapship-cli-formula-binary-'));
+  const source = JSON.parse(await readFile('fixtures/releases/tapship-cli.json', 'utf8'));
+  delete source.assets[0].binary;
+  const input = path.join(tempDir, 'release.json');
+  const outputDir = path.join(tempDir, 'output');
+  await writeFile(input, JSON.stringify(source));
+
+  const validation = spawnSync('node', ['bin/tapship.js', 'validate', '--input', input, '--type', 'formula'], { encoding: 'utf8' });
+  assert.equal(validation.status, 0, validation.stderr || validation.stdout);
+
+  const plan = spawnSync('node', ['bin/tapship.js', 'plan', '--input', input, '--type', 'formula', '--write', '--output', outputDir], { encoding: 'utf8' });
+  assert.equal(plan.status, 0, plan.stderr || plan.stdout);
+  const formula = await readFile(path.join(outputDir, 'Formula/tapship.rb'), 'utf8');
+  assert.match(formula, /bin\.install "tapship" => "tapship"/);
+});
+
 test('cli writes Homebrew-style metadata for a macOS-only cask', async () => {
   const outputDir = await mkdtemp(path.join(os.tmpdir(), 'tapship-cli-cask-'));
   const result = spawnSync('node', ['bin/tapship.js', 'plan', '--input', 'fixtures/releases/tapship-cask-only.json', '--type', 'cask', '--write', '--output', outputDir], {

@@ -31,7 +31,9 @@ Each asset should include:
 
 Optional asset fields:
 
-- `binary` for formula archives
+- `binary` for formula archives when the executable path inside the archive
+  differs from `brew.formulaBinary`; the formula binary defaults to
+  `repo.name`, and an explicit asset value overrides that fallback
 - `app` for cask app bundles
 - `pkg` for cask pkg installers
 - `platform` and `arch` for selection hints

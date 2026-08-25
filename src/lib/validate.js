@@ -61,7 +61,9 @@ export function validateRelease(release, requestedType = 'all') {
     const expected = `${release.repo.name}-${release.release.tagName}`;
     if (!formula.name.startsWith(expected)) warnings.push(`formula asset should start with '${expected}'`);
     if (!/(darwin|macos)/.test(formula.name)) warnings.push('formula asset should name a macOS platform');
-    if (!formula.binary) errors.push('formula asset must declare binary path');
+    if (formula.binary !== undefined && (typeof formula.binary !== 'string' || formula.binary.length === 0)) {
+      errors.push('formula asset binary must be a non-empty string when provided');
+    }
   }
 
   if (caskAssets[0]) {

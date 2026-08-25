@@ -11,6 +11,26 @@ test('validateRelease accepts complete all-target fixture', () => {
   assert.equal(validation.errors.length, 0);
 });
 
+test('validateRelease accepts a formula asset without an explicit binary', () => {
+  const source = structuredClone(fixture);
+  delete source.assets[0].binary;
+
+  const validation = validateRelease(normalizeRelease(source), 'formula');
+
+  assert.equal(validation.ok, true);
+  assert.equal(validation.errors.length, 0);
+});
+
+test('validateRelease rejects a non-string formula binary with a field-specific diagnostic', () => {
+  const source = structuredClone(fixture);
+  source.assets[0].binary = 42;
+
+  const validation = validateRelease(normalizeRelease(source), 'formula');
+
+  assert.equal(validation.ok, false);
+  assert.match(validation.errors.join('\n'), /formula asset binary must be a non-empty string when provided/);
+});
+
 test('validateRelease blocks missing formula asset when formula requested', () => {
   const validation = validateRelease(normalizeRelease(caskOnly), 'formula');
   assert.equal(validation.ok, false);
