@@ -7,6 +7,23 @@ const SAFE_NAME = /^[A-Za-z0-9][A-Za-z0-9._-]+$/;
 export function validateRelease(release, requestedType = 'all') {
   const errors = [];
   const warnings = [];
+  const source = release.source;
+  const isObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+
+  if (!isObject(source)) errors.push('fixture root must be an object');
+  if (!isObject(source?.repo)) errors.push('repo must be an object');
+  if (source?.brew !== undefined && !isObject(source.brew)) errors.push('brew must be an object');
+  if (!Array.isArray(source?.assets)) {
+    errors.push('assets must be an array');
+  } else {
+    source.assets.forEach((asset, index) => {
+      if (!isObject(asset)) {
+        errors.push(`assets[${index}] must be an object`);
+      } else if (typeof asset.name !== 'string' || asset.name.length === 0) {
+        errors.push(`assets[${index}].name must be a non-empty string`);
+      }
+    });
+  }
   const { formulaAssets, caskAssets } = classifyAssets(release);
 
   if (release.schemaVersion === undefined) {
@@ -24,7 +41,7 @@ export function validateRelease(release, requestedType = 'all') {
   }
 
   for (const asset of release.assets) {
-    if (!SAFE_NAME.test(asset.name)) warnings.push(`asset name contains unusual characters: ${asset.name}`);
+    if (asset.name && !SAFE_NAME.test(asset.name)) warnings.push(`asset name contains unusual characters: ${asset.name}`);
     if (!asset.url?.startsWith('https://')) errors.push(`asset missing https url: ${asset.name}`);
     if (!SHA256.test(asset.sha256 ?? '')) errors.push(`asset missing sha256: ${asset.name}`);
   }

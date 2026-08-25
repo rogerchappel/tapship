@@ -10,6 +10,20 @@ import { validateRelease } from './validate.js';
 export async function buildPlan(release, options = {}) {
   const requestedType = options.type ?? 'all';
   const validation = validateRelease(release, requestedType);
+  if (!validation.ok) {
+    return {
+      ok: false,
+      summary: {
+        repo: `${release.repo.owner}/${release.repo.name}`,
+        version: release.release.version,
+        target: requestedType,
+        generated: [],
+      },
+      validation,
+      outputs: [],
+      writeMode: Boolean(options.write),
+    };
+  }
   const { formulaAssets, caskAssets } = classifyAssets(release);
   const outputs = [];
 
