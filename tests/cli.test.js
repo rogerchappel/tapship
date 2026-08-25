@@ -131,3 +131,30 @@ for (const { name, patch, diagnostic } of [
     assert.match(validation.errors.join('\n'), diagnostic);
   });
 }
+
+for (const { name, patch, diagnostic } of [
+  { name: 'non-object repo', patch: { repo: false }, diagnostic: /repo must be an object/ },
+  { name: 'non-object brew config', patch: { brew: 'default' }, diagnostic: /brew must be an object/ },
+  { name: 'non-object asset', patch: { assets: [null] }, diagnostic: /assets\[0\] must be an object/ },
+  { name: 'asset without a name', patch: { assets: [{}] }, diagnostic: /assets\[0\]\.name must be a non-empty string/ },
+]) {
+  test(`cli commands reject ${name} without output or a stack trace`, async () => {
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), 'tapship-cli-shape-'));
+    const source = JSON.parse(await readFile('fixtures/releases/tapship-cli.json', 'utf8'));
+    const input = path.join(tempDir, 'release.json');
+    const outputDir = path.join(tempDir, 'output');
+    await writeFile(input, JSON.stringify({ ...source, ...patch }));
+
+    for (const args of [
+      ['validate', '--input', input, '--json'],
+      ['plan', '--input', input, '--write', '--output', outputDir],
+    ]) {
+      const result = spawnSync('node', ['bin/tapship.js', ...args], { encoding: 'utf8' });
+      assert.equal(result.status, 1);
+      assert.doesNotMatch(`${result.stdout}\n${result.stderr}`, /TypeError|\n\s+at /);
+      const output = args.includes('--json') ? JSON.parse(result.stdout).errors.join('\n') : result.stdout;
+      assert.match(output, diagnostic);
+      await assert.rejects(access(outputDir), { code: 'ENOENT' });
+    }
+  });
+}
