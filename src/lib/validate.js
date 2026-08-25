@@ -35,14 +35,16 @@ export function validateRelease(release, requestedType = 'all') {
       errors.push('schemaVersion must be 1');
     }
   }
-  if (!release.repo.owner || !release.repo.name) errors.push('repo.owner and repo.name are required');
+  if (typeof release.repo.owner !== 'string' || release.repo.owner.length === 0 || typeof release.repo.name !== 'string' || release.repo.name.length === 0) {
+    errors.push('repo.owner and repo.name are required and must be non-empty strings');
+  }
   if (!release.release.tagName || !SEMVER.test(release.release.tagName)) {
     errors.push('release tagName must be valid SemVer, optionally prefixed with v (for example, v1.2.3-rc.1+build.42)');
   }
 
   for (const asset of release.assets) {
     if (asset.name && !SAFE_NAME.test(asset.name)) warnings.push(`asset name contains unusual characters: ${asset.name}`);
-    if (!asset.url?.startsWith('https://')) errors.push(`asset missing https url: ${asset.name}`);
+    if (typeof asset.url !== 'string' || !asset.url.startsWith('https://')) errors.push(`asset missing https url: ${asset.name}`);
     if (!SHA256.test(asset.sha256 ?? '')) errors.push(`asset missing sha256: ${asset.name}`);
   }
 

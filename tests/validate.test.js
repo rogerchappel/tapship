@@ -84,6 +84,7 @@ for (const { name, patch, diagnostic } of [
   { name: 'non-array assets', patch: { assets: {} }, diagnostic: /assets must be an array/ },
   { name: 'non-object asset', patch: { assets: ['tapship.zip'] }, diagnostic: /assets\[0\] must be an object/ },
   { name: 'asset without a name', patch: { assets: [{}] }, diagnostic: /assets\[0\]\.name must be a non-empty string/ },
+  { name: 'asset with a non-string URL', patch: { assets: [{ name: 'tool.zip', url: 42 }] }, diagnostic: /asset missing https url: tool\.zip/ },
 ]) {
   test(`validateRelease rejects ${name} with a field-specific diagnostic`, () => {
     const validation = validateRelease(normalizeRelease({ ...fixture, ...patch }), 'all');
