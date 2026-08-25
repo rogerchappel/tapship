@@ -77,3 +77,17 @@ test('validateRelease requires a schema version', () => {
   assert.equal(validation.ok, false);
   assert.match(validation.errors.join('\n'), /schemaVersion is required/);
 });
+
+for (const { name, patch, diagnostic } of [
+  { name: 'non-object repo', patch: { repo: 'rogerchappel/tapship' }, diagnostic: /repo must be an object/ },
+  { name: 'non-object brew config', patch: { brew: [] }, diagnostic: /brew must be an object/ },
+  { name: 'non-array assets', patch: { assets: {} }, diagnostic: /assets must be an array/ },
+  { name: 'non-object asset', patch: { assets: ['tapship.zip'] }, diagnostic: /assets\[0\] must be an object/ },
+  { name: 'asset without a name', patch: { assets: [{}] }, diagnostic: /assets\[0\]\.name must be a non-empty string/ },
+]) {
+  test(`validateRelease rejects ${name} with a field-specific diagnostic`, () => {
+    const validation = validateRelease(normalizeRelease({ ...fixture, ...patch }), 'all');
+    assert.equal(validation.ok, false);
+    assert.match(validation.errors.join('\n'), diagnostic);
+  });
+}
