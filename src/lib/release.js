@@ -3,17 +3,23 @@ function stripLeadingV(version) {
 }
 
 export function normalizeRelease(payload) {
-  const repo = payload.repo ?? {};
-  const brew = payload.brew ?? {};
-  const assets = (payload.assets ?? []).map((asset) => ({
-    ...asset,
-    ext: asset.name.includes('.') ? asset.name.slice(asset.name.indexOf('.')) : '',
-  }));
-  const tagName = payload.tagName ?? payload.tag_name;
+  const source = payload && typeof payload === 'object' && !Array.isArray(payload) ? payload : {};
+  const repo = source.repo && typeof source.repo === 'object' && !Array.isArray(source.repo) ? source.repo : {};
+  const brew = source.brew && typeof source.brew === 'object' && !Array.isArray(source.brew) ? source.brew : {};
+  const sourceAssets = Array.isArray(source.assets) ? source.assets : [];
+  const assets = sourceAssets.map((value) => {
+    const asset = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+    const name = typeof asset.name === 'string' ? asset.name : '';
+    return {
+      ...asset,
+      ext: name.includes('.') ? name.slice(name.indexOf('.')) : '',
+    };
+  });
+  const tagName = source.tagName ?? source.tag_name;
   const version = stripLeadingV(tagName ?? '0.0.0');
 
   return {
-    schemaVersion: payload.schemaVersion,
+    schemaVersion: source.schemaVersion,
     source: payload,
     repo: {
       owner: repo.owner,
@@ -38,9 +44,9 @@ export function normalizeRelease(payload) {
     release: {
       tagName,
       version,
-      releaseName: payload.releaseName ?? payload.name ?? `${repo.name} ${tagName}`,
-      publishedAt: payload.publishedAt ?? payload.published_at ?? null,
-      notes: payload.notes ?? '',
+      releaseName: source.releaseName ?? source.name ?? `${repo.name} ${tagName}`,
+      publishedAt: source.publishedAt ?? source.published_at ?? null,
+      notes: source.notes ?? '',
     },
     assets,
   };
