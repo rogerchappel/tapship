@@ -50,6 +50,33 @@ Validate a fixture without generating files:
 node bin/tapship.js validate --input fixtures/releases/tapship-cli.json
 ```
 
+### Fixture contract
+
+Fixtures are JSON objects with `schemaVersion: 1`, a `repo` object containing
+non-empty `owner` and `name` fields, an optional `brew` object, a SemVer
+`tagName`, and an `assets` array. Every asset must be an object with a non-empty
+`name`, an HTTPS `url`, and a lowercase 64-character `sha256`; packaging fields
+such as `binary`, `app`, `pkg`, `kind`, and `platform` are optional.
+
+```json
+{
+  "schemaVersion": 1,
+  "repo": { "owner": "example", "name": "tool" },
+  "tagName": "v1.2.3",
+  "assets": [
+    {
+      "name": "tool-v1.2.3-darwin-arm64.tar.gz",
+      "url": "https://example.com/tool-v1.2.3-darwin-arm64.tar.gz",
+      "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      "binary": "tool"
+    }
+  ]
+}
+```
+
+Malformed container shapes and asset entries are reported with field-specific
+validation errors before any plan output is generated.
+
 ## Generated output
 
 When `--write` is passed and validation succeeds, tapship writes files like:
