@@ -57,6 +57,9 @@ non-empty `owner` and `name` fields, an optional `brew` object, a SemVer
 `tagName`, and an `assets` array. Every asset must be an object with a non-empty
 `name`, an HTTPS `url`, and a lowercase 64-character `sha256`; packaging fields
 such as `binary`, `app`, `pkg`, `kind`, and `platform` are optional.
+For a formula asset, omitting `binary` installs the path named by
+`brew.formulaBinary`, which defaults to `repo.name`; an asset-level `binary`
+selects a different path from inside the archive.
 
 ```json
 {
@@ -67,8 +70,7 @@ such as `binary`, `app`, `pkg`, `kind`, and `platform` are optional.
     {
       "name": "tool-v1.2.3-darwin-arm64.tar.gz",
       "url": "https://example.com/tool-v1.2.3-darwin-arm64.tar.gz",
-      "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
-      "binary": "tool"
+      "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
     }
   ]
 }
