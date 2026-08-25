@@ -25,6 +25,19 @@ test('renderFormula includes install stanza', () => {
   assert.match(output, /shell_output\("#\{bin\}\/" \+ "tapship --version"\)/);
 });
 
+test('renderFormula falls back to formulaBinary and preserves an asset override', () => {
+  const fallbackAsset = { ...formulaAssets[0] };
+  delete fallbackAsset.binary;
+
+  const fallback = renderFormula(release, fallbackAsset);
+  const override = renderFormula(release, { ...fallbackAsset, binary: 'dist/tapship' });
+
+  assert.match(fallback, /bin\.install "tapship" => "tapship"/);
+  assert.match(override, /bin\.install "dist\/tapship" => "tapship"/);
+  assertValidRuby(fallback);
+  assertValidRuby(override);
+});
+
 test('renderFormula uses the configured Homebrew test command', () => {
   const configured = structuredClone(release);
   configured.brew.testCommand = 'tapship doctor --quiet';
