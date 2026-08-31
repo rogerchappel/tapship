@@ -9,10 +9,46 @@ export function validateRelease(release, requestedType = 'all') {
   const warnings = [];
   const source = release.source;
   const isObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+  const requireString = (value, field, { optional = false } = {}) => {
+    if (optional && value === undefined) return;
+    if (typeof value !== 'string' || value.length === 0) errors.push(`${field} must be a non-empty string`);
+  };
+  const requireOptionalString = (value, field) => {
+    if (value !== undefined && typeof value !== 'string') errors.push(`${field} must be a string`);
+  };
 
   if (!isObject(source)) errors.push('fixture root must be an object');
-  if (!isObject(source?.repo)) errors.push('repo must be an object');
-  if (source?.brew !== undefined && !isObject(source.brew)) errors.push('brew must be an object');
+  if (!isObject(source?.repo)) {
+    errors.push('repo must be an object');
+  } else {
+    requireString(source.repo.owner, 'repo.owner');
+    requireString(source.repo.name, 'repo.name');
+    for (const field of ['homepage', 'description', 'license']) requireOptionalString(source.repo[field], `repo.${field}`);
+    if (source.repo.tap !== undefined && !isObject(source.repo.tap)) {
+      errors.push('repo.tap must be an object');
+    } else if (isObject(source.repo.tap)) {
+      requireOptionalString(source.repo.tap.owner, 'repo.tap.owner');
+      requireOptionalString(source.repo.tap.name, 'repo.tap.name');
+    }
+  }
+  if (source?.brew !== undefined && !isObject(source.brew)) {
+    errors.push('brew must be an object');
+  } else if (isObject(source?.brew)) {
+    for (const field of ['formulaClass', 'formulaBinary', 'caskToken', 'caskApp', 'caskBinary', 'testCommand']) {
+      requireOptionalString(source.brew[field], `brew.${field}`);
+    }
+    requireOptionalString(source.brew.caveats, 'brew.caveats');
+    if (source.brew.dependencies !== undefined && !Array.isArray(source.brew.dependencies)) {
+      errors.push('brew.dependencies must be an array');
+    } else if (Array.isArray(source.brew.dependencies)) {
+      source.brew.dependencies.forEach((dependency, index) => requireString(dependency, `brew.dependencies[${index}]`));
+    }
+    if (source.brew.livecheck !== undefined && !isObject(source.brew.livecheck)) {
+      errors.push('brew.livecheck must be an object');
+    } else if (isObject(source.brew.livecheck)) {
+      requireString(source.brew.livecheck.url, 'brew.livecheck.url');
+    }
+  }
   if (!Array.isArray(source?.assets)) {
     errors.push('assets must be an array');
   } else {
@@ -21,6 +57,12 @@ export function validateRelease(release, requestedType = 'all') {
         errors.push(`assets[${index}] must be an object`);
       } else if (typeof asset.name !== 'string' || asset.name.length === 0) {
         errors.push(`assets[${index}].name must be a non-empty string`);
+      } else {
+        requireString(asset.url, `assets[${index}].url`);
+        requireString(asset.sha256, `assets[${index}].sha256`);
+        for (const field of ['kind', 'binary', 'app', 'pkg', 'platform', 'arch']) {
+          if (asset[field] !== undefined) requireString(asset[field], `assets[${index}].${field}`);
+        }
       }
     });
   }
