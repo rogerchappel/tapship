@@ -8,6 +8,19 @@ tapship expects a local JSON file with these top-level keys:
   `1.2.3`, `v1.2.3-rc.1`, or `v1.2.3+build.42`)
 - `brew`: optional overrides for formula/cask rendering
 
+## Field types
+
+Renderer inputs are validated before Tapship creates a plan or writes files.
+`repo.owner` and `repo.name` are required non-empty strings. When present,
+`repo.homepage`, `repo.description`, `repo.license`, `repo.tap.owner`, and
+`repo.tap.name` must be strings; `repo.tap` must be an object.
+
+`brew` must be an object when present. Its formula/cask names and commands
+(`formulaClass`, `formulaBinary`, `caskToken`, `caskApp`, `caskBinary`, and
+`testCommand`) must be strings. `caveats` must also be a string when present.
+`dependencies` must be an array of non-empty strings. `livecheck`, when
+present, must be an object with a non-empty string `url`.
+
 For formula releases, `brew.testCommand` is the command invoked by the
 generated Homebrew `test do` block. Write it as the installed formula binary
 followed by any arguments (for example, `tapship doctor --quiet`); Tapship
@@ -24,10 +37,10 @@ support for a later schema is implemented.
 
 Each asset should include:
 
-- `name`
-- `url`
-- `sha256`
-- `kind`: `formula` or `cask`
+- `name`: non-empty string
+- `url`: non-empty HTTPS string
+- `sha256`: string containing a lowercase SHA-256 digest
+- `kind`: non-empty string, normally `formula` or `cask`
 
 Optional asset fields:
 
@@ -37,6 +50,10 @@ Optional asset fields:
 - `app` for cask app bundles
 - `pkg` for cask pkg installers
 - `platform` and `arch` for selection hints
+
+Every optional asset field above must be a non-empty string when present.
+Malformed fields produce field-specific validation errors for `validate`,
+`plan`, and `plan --write`; blocked write plans create no output files.
 
 For cask assets, `platform: "macos"` also marks the generated cask as
 macOS-only, so its output includes Homebrew's `depends_on :macos` stanza.
