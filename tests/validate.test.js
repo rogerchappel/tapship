@@ -112,3 +112,20 @@ for (const { name, patch, diagnostic } of [
     assert.match(validation.errors.join('\n'), diagnostic);
   });
 }
+
+for (const { name, mutate, diagnostic } of [
+  { name: 'non-string repo description', mutate: (source) => { source.repo.description = 42; }, diagnostic: /repo\.description must be a string/ },
+  { name: 'non-array dependencies', mutate: (source) => { source.brew.dependencies = 'curl'; }, diagnostic: /brew\.dependencies must be an array/ },
+  { name: 'non-string dependency', mutate: (source) => { source.brew.dependencies = ['curl', false]; }, diagnostic: /brew\.dependencies\[1\] must be a non-empty string/ },
+  { name: 'non-object livecheck', mutate: (source) => { source.brew.livecheck = 'github'; }, diagnostic: /brew\.livecheck must be an object/ },
+  { name: 'livecheck without a URL', mutate: (source) => { source.brew.livecheck = {}; }, diagnostic: /brew\.livecheck\.url must be a non-empty string/ },
+  { name: 'non-string cask payload', mutate: (source) => { source.assets[1].app = ['Tapship.app']; }, diagnostic: /assets\[1\]\.app must be a non-empty string/ },
+]) {
+  test(`validateRelease rejects ${name}`, () => {
+    const source = structuredClone(fixture);
+    mutate(source);
+    const validation = validateRelease(normalizeRelease(source), 'all');
+    assert.equal(validation.ok, false);
+    assert.match(validation.errors.join('\n'), diagnostic);
+  });
+}
