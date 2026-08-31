@@ -149,6 +149,33 @@ for (const { name, patch, diagnostic } of [
   });
 }
 
+for (const { name, mutate, diagnostic } of [
+  { name: 'string dependencies', mutate: (source) => { source.brew.dependencies = 'curl'; }, diagnostic: /brew\.dependencies must be an array/ },
+  { name: 'numeric repo description', mutate: (source) => { source.repo.description = 42; }, diagnostic: /repo\.description must be a string/ },
+  { name: 'malformed livecheck', mutate: (source) => { source.brew.livecheck = { url: false }; }, diagnostic: /brew\.livecheck\.url must be a non-empty string/ },
+  { name: 'numeric cask payload', mutate: (source) => { source.assets[1].pkg = 42; }, diagnostic: /assets\[1\]\.pkg must be a non-empty string/ },
+]) {
+  test(`cli validate, plan, and plan --write reject ${name} deterministically`, async () => {
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), 'tapship-cli-fields-'));
+    const source = JSON.parse(await readFile('fixtures/releases/tapship-cli.json', 'utf8'));
+    mutate(source);
+    const input = path.join(tempDir, 'release.json');
+    await writeFile(input, JSON.stringify(source));
+
+    for (const [index, args] of [
+      ['validate', '--input', input],
+      ['plan', '--input', input],
+      ['plan', '--input', input, '--write', '--output', path.join(tempDir, 'output')],
+    ].entries()) {
+      const result = spawnSync('node', ['bin/tapship.js', ...args], { encoding: 'utf8' });
+      assert.equal(result.status, 1, `command ${index}: ${result.stderr || result.stdout}`);
+      assert.match(result.stdout, diagnostic);
+      assert.doesNotMatch(`${result.stdout}\n${result.stderr}`, /TypeError|\n\s+at /);
+    }
+    await assert.rejects(access(path.join(tempDir, 'output')), { code: 'ENOENT' });
+  });
+}
+
 for (const { name, patch, diagnostic } of [
   { name: 'non-object repo', patch: { repo: false }, diagnostic: /repo must be an object/ },
   { name: 'non-object brew config', patch: { brew: 'default' }, diagnostic: /brew must be an object/ },
