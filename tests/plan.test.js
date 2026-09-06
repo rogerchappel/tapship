@@ -31,3 +31,16 @@ test('buildPlan creates no output directory when validation blocks a write', asy
   assert.equal(plan.outputDir, undefined);
   await assert.rejects(access(outputDir), { code: 'ENOENT' });
 });
+
+test('buildPlan renders valid custom Homebrew identifiers', async () => {
+  const source = structuredClone(fixture);
+  source.brew.formulaClass = 'TapshipAT2';
+  source.brew.formulaBinary = 'tapship-cli';
+  source.brew.caskToken = 'tapship@preview';
+  const plan = await buildPlan(normalizeRelease(source), { type: 'all', write: false });
+
+  assert.equal(plan.ok, true);
+  assert.match(plan.outputs.find((item) => item.kind === 'formula').content, /class TapshipAT2 < Formula/);
+  assert.match(plan.outputs.find((item) => item.kind === 'formula').content, /=> "tapship-cli"/);
+  assert.equal(plan.outputs.find((item) => item.kind === 'cask').path, 'Casks/tapship@preview.rb');
+});
