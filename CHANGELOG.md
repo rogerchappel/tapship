@@ -10,6 +10,8 @@ All notable changes to this project will be documented here.
 
 ### Fixed
 
+- Reject blank or syntactically invalid Homebrew renderer overrides before a
+  plan can write formula or cask files.
 - Formula fixtures may omit an asset binary and use the configured formula
   binary path, while explicit asset paths continue to override the fallback.
 

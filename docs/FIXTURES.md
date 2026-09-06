@@ -17,7 +17,13 @@ Renderer inputs are validated before Tapship creates a plan or writes files.
 
 `brew` must be an object when present. Its formula/cask names and commands
 (`formulaClass`, `formulaBinary`, `caskToken`, `caskApp`, `caskBinary`, and
-`testCommand`) must be strings. `caveats` must also be a string when present.
+`testCommand`) must be non-empty strings; whitespace-only overrides are
+rejected. `formulaClass` must be a Ruby constant name such as `TapshipAT2`.
+`formulaBinary` and `caskBinary` must start with a letter or digit and may use
+letters, digits, `@`, `+`, `.`, `_`, and `-`. `caskToken` follows the same
+character rules but requires lowercase letters. These restrictions prevent
+invalid Ruby declarations and unsafe output paths. `caveats` must also be a
+non-empty string when present.
 `dependencies` must be an array of non-empty strings. `livecheck`, when
 present, must be an object with a non-empty string `url`.
 
