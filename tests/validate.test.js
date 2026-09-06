@@ -129,3 +129,30 @@ for (const { name, mutate, diagnostic } of [
     assert.match(validation.errors.join('\n'), diagnostic);
   });
 }
+
+for (const { name, field, value, diagnostic } of [
+  { name: 'blank formula class', field: 'formulaClass', value: '  ', diagnostic: /brew\.formulaClass must be a non-empty string/ },
+  { name: 'invalid formula class', field: 'formulaClass', value: 'tapship-cli', diagnostic: /brew\.formulaClass must be a valid Ruby class name/ },
+  { name: 'blank formula binary', field: 'formulaBinary', value: '', diagnostic: /brew\.formulaBinary must be a non-empty string/ },
+  { name: 'unsafe formula binary', field: 'formulaBinary', value: '../tapship', diagnostic: /brew\.formulaBinary must be a valid Homebrew binary name/ },
+  { name: 'blank cask token', field: 'caskToken', value: '\t', diagnostic: /brew\.caskToken must be a non-empty string/ },
+  { name: 'invalid cask token', field: 'caskToken', value: 'Tapship Preview', diagnostic: /brew\.caskToken must be a valid Homebrew cask token/ },
+  { name: 'blank cask app', field: 'caskApp', value: ' ', diagnostic: /brew\.caskApp must be a non-empty string/ },
+  { name: 'blank test command', field: 'testCommand', value: '\n', diagnostic: /brew\.testCommand must be a non-empty string/ },
+]) {
+  test(`validateRelease rejects ${name}`, () => {
+    const source = structuredClone(fixture);
+    source.brew[field] = value;
+    const validation = validateRelease(normalizeRelease(source), 'all');
+    assert.equal(validation.ok, false);
+    assert.match(validation.errors.join('\n'), diagnostic);
+  });
+}
+
+test('validateRelease accepts valid custom Homebrew identifiers', () => {
+  const source = structuredClone(fixture);
+  source.brew.formulaClass = 'TapshipAT2';
+  source.brew.formulaBinary = 'tapship-cli';
+  source.brew.caskToken = 'tapship@preview';
+  assert.equal(validateRelease(normalizeRelease(source), 'all').ok, true);
+});

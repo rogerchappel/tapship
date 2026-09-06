@@ -176,6 +176,34 @@ for (const { name, mutate, diagnostic } of [
   });
 }
 
+for (const { name, field, value, diagnostic } of [
+  { name: 'blank formula class', field: 'formulaClass', value: ' ', diagnostic: /brew\.formulaClass must be a non-empty string/ },
+  { name: 'invalid formula class', field: 'formulaClass', value: 'tapship-cli', diagnostic: /brew\.formulaClass must be a valid Ruby class name/ },
+  { name: 'unsafe formula binary', field: 'formulaBinary', value: '../tapship', diagnostic: /brew\.formulaBinary must be a valid Homebrew binary name/ },
+  { name: 'blank cask token', field: 'caskToken', value: '\t', diagnostic: /brew\.caskToken must be a non-empty string/ },
+  { name: 'invalid cask token', field: 'caskToken', value: 'Tapship Preview', diagnostic: /brew\.caskToken must be a valid Homebrew cask token/ },
+]) {
+  test(`cli blocks writes for ${name}`, async () => {
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), 'tapship-cli-brew-id-'));
+    const source = JSON.parse(await readFile('fixtures/releases/tapship-cli.json', 'utf8'));
+    source.brew[field] = value;
+    const input = path.join(tempDir, 'release.json');
+    const outputDir = path.join(tempDir, 'output');
+    await writeFile(input, JSON.stringify(source));
+
+    for (const args of [
+      ['validate', '--input', input],
+      ['plan', '--input', input],
+      ['plan', '--input', input, '--write', '--output', outputDir],
+    ]) {
+      const result = spawnSync('node', ['bin/tapship.js', ...args], { encoding: 'utf8' });
+      assert.equal(result.status, 1, result.stderr || result.stdout);
+      assert.match(result.stdout, diagnostic);
+    }
+    await assert.rejects(access(outputDir), { code: 'ENOENT' });
+  });
+}
+
 for (const { name, patch, diagnostic } of [
   { name: 'non-object repo', patch: { repo: false }, diagnostic: /repo must be an object/ },
   { name: 'non-object brew config', patch: { brew: 'default' }, diagnostic: /brew must be an object/ },
