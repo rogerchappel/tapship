@@ -3,6 +3,9 @@ import { classifyAssets } from './classify.js';
 const SEMVER = /^v?(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-(?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*)(?:\.(?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*))*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$/;
 const SHA256 = /^[a-f0-9]{64}$/;
 const SAFE_NAME = /^[A-Za-z0-9][A-Za-z0-9._-]+$/;
+const FORMULA_CLASS = /^[A-Z][A-Za-z0-9]*$/;
+const BREW_BINARY = /^[A-Za-z0-9][A-Za-z0-9@+._-]*$/;
+const CASK_TOKEN = /^[a-z0-9][a-z0-9@+._-]*$/;
 
 export function validateRelease(release, requestedType = 'all') {
   const errors = [];
@@ -11,7 +14,7 @@ export function validateRelease(release, requestedType = 'all') {
   const isObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
   const requireString = (value, field, { optional = false } = {}) => {
     if (optional && value === undefined) return;
-    if (typeof value !== 'string' || value.length === 0) errors.push(`${field} must be a non-empty string`);
+    if (typeof value !== 'string' || value.trim().length === 0) errors.push(`${field} must be a non-empty string`);
   };
   const requireOptionalString = (value, field) => {
     if (value !== undefined && typeof value !== 'string') errors.push(`${field} must be a string`);
@@ -35,9 +38,21 @@ export function validateRelease(release, requestedType = 'all') {
     errors.push('brew must be an object');
   } else if (isObject(source?.brew)) {
     for (const field of ['formulaClass', 'formulaBinary', 'caskToken', 'caskApp', 'caskBinary', 'testCommand']) {
-      requireOptionalString(source.brew[field], `brew.${field}`);
+      requireString(source.brew[field], `brew.${field}`, { optional: true });
     }
-    requireOptionalString(source.brew.caveats, 'brew.caveats');
+    requireString(source.brew.caveats, 'brew.caveats', { optional: true });
+    if (typeof source.brew.formulaClass === 'string' && source.brew.formulaClass.trim() && !FORMULA_CLASS.test(source.brew.formulaClass)) {
+      errors.push('brew.formulaClass must be a valid Ruby class name (for example, TapshipAT2)');
+    }
+    if (typeof source.brew.formulaBinary === 'string' && source.brew.formulaBinary.trim() && !BREW_BINARY.test(source.brew.formulaBinary)) {
+      errors.push('brew.formulaBinary must be a valid Homebrew binary name using letters, digits, @, +, ., _, or -');
+    }
+    if (typeof source.brew.caskBinary === 'string' && source.brew.caskBinary.trim() && !BREW_BINARY.test(source.brew.caskBinary)) {
+      errors.push('brew.caskBinary must be a valid Homebrew binary name using letters, digits, @, +, ., _, or -');
+    }
+    if (typeof source.brew.caskToken === 'string' && source.brew.caskToken.trim() && !CASK_TOKEN.test(source.brew.caskToken)) {
+      errors.push('brew.caskToken must be a valid Homebrew cask token using lowercase letters, digits, @, +, ., _, or -');
+    }
     if (source.brew.dependencies !== undefined && !Array.isArray(source.brew.dependencies)) {
       errors.push('brew.dependencies must be an array');
     } else if (Array.isArray(source.brew.dependencies)) {
