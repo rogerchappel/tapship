@@ -5,6 +5,14 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 
+function assertStackFreeFailure(result, cause) {
+  assert.equal(result.status, 1, result.stdout || result.stderr);
+  assert.equal(result.stdout, '');
+  assert.match(result.stderr, cause);
+  assert.equal(result.stderr.trim().split('\n').length, 1, `expected a single-line message, got: ${result.stderr}`);
+  assert.doesNotMatch(`${result.stdout}\n${result.stderr}`, /TypeError|\n\s+at /);
+}
+
 test('cli writes formula output when requested', async () => {
   const outputDir = await mkdtemp(path.join(os.tmpdir(), 'tapship-cli-'));
   const result = spawnSync('node', ['bin/tapship.js', 'plan', '--input', 'fixtures/releases/tapship-cli.json', '--type', 'formula', '--write', '--output', outputDir], {
@@ -203,6 +211,32 @@ for (const { name, field, value, diagnostic } of [
     await assert.rejects(access(outputDir), { code: 'ENOENT' });
   });
 }
+
+for (const { name, args, cause } of [
+  { name: 'missing file', args: ['plan', '--input', 'no-such-release.json'], cause: /no-such-release\.json: no such file/ },
+  { name: 'omitted --input', args: ['plan'], cause: /Missing required --input <release\.json>/ },
+  { name: 'unknown command', args: ['frobnicate', '--input', 'fixtures/releases/tapship-cli.json'], cause: /Unknown command: frobnicate/ },
+]) {
+  test(`cli reports ${name} as a single-line error without a stack trace`, () => {
+    const result = spawnSync('node', ['bin/tapship.js', ...args], { encoding: 'utf8' });
+    assertStackFreeFailure(result, cause);
+  });
+}
+
+test('cli reports a directory input as a single-line error naming the path', async () => {
+  const tempDir = await mkdtemp(path.join(os.tmpdir(), 'tapship-cli-dir-input-'));
+  const result = spawnSync('node', ['bin/tapship.js', 'plan', '--input', tempDir], { encoding: 'utf8' });
+  assertStackFreeFailure(result, new RegExp(`${tempDir.split('/').join('\\/')}.*is a directory`));
+});
+
+test('cli reports malformed JSON as a single-line error naming the path', async () => {
+  const tempDir = await mkdtemp(path.join(os.tmpdir(), 'tapship-cli-bad-json-'));
+  const input = path.join(tempDir, 'release.json');
+  await writeFile(input, '{ "name": , }\n');
+
+  const result = spawnSync('node', ['bin/tapship.js', 'plan', '--input', input], { encoding: 'utf8' });
+  assertStackFreeFailure(result, new RegExp(`${tempDir.split('/').join('\\/')}.*Invalid JSON`));
+});
 
 for (const { name, patch, diagnostic } of [
   { name: 'non-object repo', patch: { repo: false }, diagnostic: /repo must be an object/ },
