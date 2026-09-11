@@ -60,6 +60,9 @@ Optional asset fields:
 Every optional asset field above must be a non-empty string when present.
 Malformed fields produce field-specific validation errors for `validate`,
 `plan`, and `plan --write`; blocked write plans create no output files.
+Before any field is read, input-file failures (missing file, directory,
+permission denied, malformed JSON, or an omitted `--input`) exit 1 with a
+single-line message naming the failing path (or the missing option) and the cause, without a stack trace.
 
 For cask assets, `platform: "macos"` also marks the generated cask as
 macOS-only, so its output includes Homebrew's `depends_on :macos` stanza.
