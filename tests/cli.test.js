@@ -235,7 +235,15 @@ test('cli reports malformed JSON as a single-line error naming the path', async 
   await writeFile(input, '{ "name": , }\n');
 
   const result = spawnSync('node', ['bin/tapship.js', 'plan', '--input', input], { encoding: 'utf8' });
-  assertStackFreeFailure(result, new RegExp(`${tempDir.split('/').join('\\/')}.*Invalid JSON`));
+  assertStackFreeFailure(result, new RegExp(`Invalid JSON in input.*release\\.json`));
+});
+
+test('cli blocks plan --write without creating output when the input cannot be read', async () => {
+  const tempDir = await mkdtemp(path.join(os.tmpdir(), 'tapship-cli-input-fail-write-'));
+  const outputDir = path.join(tempDir, 'output');
+  const result = spawnSync('node', ['bin/tapship.js', 'plan', '--input', path.join(tempDir, 'missing.json'), '--write', '--output', outputDir], { encoding: 'utf8' });
+  assertStackFreeFailure(result, /no such file or directory/);
+  await assert.rejects(access(outputDir), { code: 'ENOENT' });
 });
 
 for (const { name, patch, diagnostic } of [
