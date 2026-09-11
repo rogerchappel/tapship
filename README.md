@@ -103,6 +103,7 @@ brew install --cask tapship
 - No tap pushes.
 - No writes outside the requested output directory.
 - `--input`, `--type`, and `--output` require values; another option is not accepted as a value.
+- Input-file failures (missing file, directory, permission denied, malformed JSON, or an omitted `--input`) and unknown commands exit 1 with a single-line message naming the failing path (or the missing option) and the cause; no stack trace is printed and `--write` creates no output.
 - Invalid `--type` values fail before planning; accepted values are `auto`, `formula`, `cask`, and `all`.
 - Failed validation never creates the requested output directory or files, even with `--write`.
 - Dry-run by default.
