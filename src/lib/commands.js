@@ -1,5 +1,6 @@
 import { buildPlan } from './plan.js';
 import { classifyAssets } from './classify.js';
+import { ArgumentError } from './errors.js';
 import { readReleaseInput } from './read-input.js';
 import { normalizeRelease } from './release.js';
 import { validateRelease } from './validate.js';
@@ -18,7 +19,7 @@ export async function runPlanCommand(parsed, runtime) {
   }
 
   if (parsed.command !== 'plan') {
-    throw new Error(`Unknown command: ${parsed.command}`);
+    throw new ArgumentError(`Unknown command: ${parsed.command}. Run \`tapship --help\` for usage.`);
   }
 
   const plan = await buildPlan(release, {
