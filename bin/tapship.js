@@ -8,7 +8,7 @@ runCli(process.argv.slice(2), {
 }).then((code) => {
   process.exitCode = code;
 }).catch((error) => {
-  const diagnostic = error.name === 'ArgumentError' ? error.message : (error.stack || error.message);
+  const diagnostic = error.userFacing === true ? error.message : (error.stack || error.message);
   process.stderr.write(`${diagnostic}\n`);
   process.exitCode = 1;
 });

@@ -1,3 +1,5 @@
+import { ArgumentError } from './errors.js';
+
 const HELP_TEXT = `tapship
 
 Usage:
@@ -14,13 +16,6 @@ Defaults:
 `;
 
 const VALID_TYPES = new Set(['auto', 'formula', 'cask', 'all']);
-
-class ArgumentError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = 'ArgumentError';
-  }
-}
 
 function takeOptionValue(args, index, option) {
   const value = args[index + 1];
