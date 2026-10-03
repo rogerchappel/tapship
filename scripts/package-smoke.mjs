@@ -24,6 +24,7 @@ try {
   const output = run('npm', ['pack', '--pack-destination', tmp, '--json']);
   const [pack] = JSON.parse(output);
   const packed = new Set(pack.files.map((file) => file.path));
+  const manifest = JSON.parse(run('node', ['-e', "process.stdout.write(JSON.stringify(require('./package.json')))"]));
   const required = [
     'bin/tapship.js',
     'src/index.js',
@@ -38,7 +39,8 @@ try {
     'CHANGELOG.md',
     'CONTRIBUTING.md'
   ];
-  const missing = required.filter((file) => !packed.has(file));
+  const advertised = [manifest.bin.tapship, manifest.main.replace(/^\.\//, '')];
+  const missing = [...new Set([...required, ...advertised])].filter((file) => !packed.has(file));
 
   if (missing.length > 0) {
     console.error('Package tarball is missing release-candidate files:');
@@ -49,7 +51,8 @@ try {
   const tarball = join(tmp, pack.filename);
   run('npm', ['init', '-y'], { cwd: tmp });
   run('npm', ['install', tarball], { cwd: tmp });
-  const plan = run('npx', ['tapship', 'plan', '--input', 'node_modules/tapship/fixtures/releases/tapship-cli.json', '--type', 'formula'], { cwd: tmp });
+  const executable = join(tmp, 'node_modules', '.bin', 'tapship');
+  const plan = run(executable, ['plan', '--input', 'node_modules/tapship/fixtures/releases/tapship-cli.json', '--type', 'formula'], { cwd: tmp });
 
   if (!plan.includes('Plan: ready') || !plan.includes('Target: formula') || !plan.includes('Formula/tapship.rb')) {
     console.error('Installed package smoke did not render the expected Homebrew plan.');
