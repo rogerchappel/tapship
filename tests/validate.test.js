@@ -44,6 +44,15 @@ test('validateRelease rejects invalid schema version', () => {
   assert.match(validation.errors.join('\n'), /schemaVersion/);
 });
 
+test('validateRelease rejects a non-string release tag with a clear diagnostic', () => {
+  const release = normalizeRelease(fixture);
+  release.release.tagName = 123;
+  const validation = validateRelease(release, 'all');
+
+  assert.equal(validation.ok, false);
+  assert.match(validation.errors.join('\n'), /release tagName must be valid SemVer/);
+});
+
 for (const tagName of [
   '1.2.3',
   'v1.2.3',
