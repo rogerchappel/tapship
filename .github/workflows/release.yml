@@ -10,7 +10,7 @@ permissions:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  RELEASEBOX_REF: v0.1.0
+  RELEASEBOX_REF: 055d5977c5c67ebba3fbdf0be31f7bcebed029d0
 
 jobs:
   release:
@@ -23,9 +23,16 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: Validate ReleaseBox ref
+        run: |
+          if ! [[ "$RELEASEBOX_REF" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "RELEASEBOX_REF must be a full immutable commit SHA" >&2
+            exit 1
+          fi
       - name: Install ReleaseBox
         run: |
-          git clone --depth 1 --branch "$RELEASEBOX_REF" https://github.com/rogerchappel/releasebox.git .releasebox
+          git clone https://github.com/rogerchappel/releasebox.git .releasebox
+          git -C .releasebox checkout --detach "$RELEASEBOX_REF"
           npm ci --prefix .releasebox
           npm run build --prefix .releasebox
       - run: npm ci
