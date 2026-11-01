@@ -16,7 +16,7 @@ It is designed for maintainers who already have release asset metadata and want 
 ## Quickstart
 
 ```sh
-npm install
+npm ci
 node bin/tapship.js plan --input fixtures/releases/tapship-cli.json
 ```
 
