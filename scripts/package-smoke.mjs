@@ -11,7 +11,8 @@ const run = (command, args, options = {}) => {
   });
 
   if (result.status !== 0) {
-    process.stderr.write(result.stderr || result.stdout);
+    const detail = result.stderr || result.stdout || result.error?.message || `exit status ${result.status}`;
+    process.stderr.write(`${command} ${args.join(' ')} failed: ${detail}`);
     process.exit(result.status ?? 1);
   }
 

@@ -119,6 +119,10 @@ npm run smoke
 npm run package:smoke
 ```
 
+## CI network boundary
+
+CI installs lockfile dependencies and the package smoke test installs a locally packed tarball; npm may need registry access to resolve dependencies. Read-only GitHub repository permissions do not restrict network egress. See [CI package and network boundary](docs/ci-network-boundary.md) for scope and enforcement guidance.
+
 ## Docs
 
 - [PRD](docs/PRD.md)
