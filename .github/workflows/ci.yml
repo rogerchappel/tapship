@@ -26,3 +26,5 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run release:check
+      - name: Validate npm package contents
+        run: npm pack --dry-run
