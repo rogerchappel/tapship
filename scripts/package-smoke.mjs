@@ -40,7 +40,12 @@ try {
     'CHANGELOG.md',
     'CONTRIBUTING.md'
   ];
-  const advertised = [manifest.bin.tapship, manifest.main.replace(/^\.\//, '')];
+  const exportTargets = Object.values(manifest.exports).flatMap((target) =>
+    typeof target === 'string' ? [target] : Object.values(target)
+  );
+  const advertised = [manifest.bin.tapship, manifest.main, ...exportTargets]
+    .filter(Boolean)
+    .map((file) => file.replace(/^\.\//, ''));
   const missing = [...new Set([...required, ...advertised])].filter((file) => !packed.has(file));
 
   if (missing.length > 0) {
@@ -52,6 +57,8 @@ try {
   const tarball = join(tmp, pack.filename);
   run('npm', ['init', '-y'], { cwd: tmp });
   run('npm', ['install', tarball], { cwd: tmp });
+  const publicExport = run('node', ['--input-type=module', '-e', "import('tapship').then((pkg) => { if (!pkg) process.exit(1); })"], { cwd: tmp });
+  void publicExport;
   const executable = join(tmp, 'node_modules', '.bin', 'tapship');
   const plan = run(executable, ['plan', '--input', 'node_modules/tapship/fixtures/releases/tapship-cli.json', '--type', 'formula'], { cwd: tmp });
 
