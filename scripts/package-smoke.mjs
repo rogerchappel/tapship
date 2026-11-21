@@ -57,8 +57,15 @@ try {
   const tarball = join(tmp, pack.filename);
   run('npm', ['init', '-y'], { cwd: tmp });
   run('npm', ['install', tarball], { cwd: tmp });
-  const publicExport = run('node', ['--input-type=module', '-e', "import('tapship').then((pkg) => { if (!pkg) process.exit(1); })"], { cwd: tmp });
-  void publicExport;
+  run('node', ['--input-type=module', '-e', `
+    import assert from 'node:assert/strict';
+    import * as api from 'tapship';
+
+    assert.deepEqual(Object.keys(api).sort(), ['buildPlan', 'runCli']);
+    assert.equal(typeof api.buildPlan, 'function');
+    assert.equal(typeof api.runCli, 'function');
+    assert.equal(Object.hasOwn(api, 'default'), false);
+  `], { cwd: tmp });
   const executable = join(tmp, 'node_modules', '.bin', 'tapship');
   const plan = run(executable, ['plan', '--input', 'node_modules/tapship/fixtures/releases/tapship-cli.json', '--type', 'formula'], { cwd: tmp });
 
